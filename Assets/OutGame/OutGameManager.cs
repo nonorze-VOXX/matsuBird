@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : Singleton<GameManager>
+public class OutGameManager : Singleton<OutGameManager>
 {
     protected override void _Awake()
     {
@@ -12,6 +12,5 @@ public class GameManager : Singleton<GameManager>
 
     public void StartGame()
     {
-        throw new NotImplementedException();
     }
 }

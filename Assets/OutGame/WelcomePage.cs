@@ -24,7 +24,7 @@ namespace DefaultNamespace
             
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                GameManager.instance.StartGame();
+                OutGameManager.instance.StartGame();
             }
         }
     }
