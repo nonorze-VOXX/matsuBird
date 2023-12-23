@@ -55,6 +55,7 @@ namespace InGame
             newMap();
             gameFlowState = GameFlowState.Prepare;
             transform.position = Vector2.zero;
+            mainCamera.transform.position = new Vector3(0, 0, -10);
             for (var i = mapState.Count / 2; i < mapState.Count; i++) mapState[i] = groundState.Normal;
             fireWallHint = Instantiate(fireWallPrefab, transform);
             mapState[1] = groundState.Fire;
@@ -76,8 +77,9 @@ namespace InGame
                     if (fireWallHint.activeSelf)
                     {
                         var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        fireWallHint.transform.position =
-                            new Vector2(Mathf.Round(worldPosition.x), gameConfig.groundHeight);
+                        var hintpos = new Vector2(Mathf.Round(worldPosition.x), gameConfig.groundHeight);
+                        hintpos.x = Mathf.Max(hintpos.x, gameConfig.fireRangeMin);
+                        fireWallHint.transform.position = hintpos;
                         if (Input.GetKeyDown(KeyCode.Mouse0))
                         {
                             var index = 0;
@@ -128,9 +130,12 @@ namespace InGame
                     break;
                 case GameFlowState.NextMap:
                     switchTimer += Time.deltaTime;
-                    transform.position = Vector2.Lerp(pastPosition,
-                        pastPosition - new Vector2(gameConfig.mapSize.x * 2, 0),
+                    Vector3 newPos = Vector2.Lerp(pastPosition,
+                        pastPosition + new Vector2(gameConfig.mapSize.x * 2, 0),
                         switchTimer / gameConfig.switchTime);
+
+                    newPos.z = -10;
+                    mainCamera.transform.position = newPos;
                     if (switchTimer > gameConfig.switchTime)
                         SwitchState(GameFlowState.Prepare);
                     break;
@@ -183,8 +188,8 @@ namespace InGame
             switch (state)
             {
                 case GameFlowState.Prepare:
-                    // mainCamera.transform.position = Vector2.zero;
-                    transform.position = Vector2.zero;
+                    mainCamera.transform.position = new Vector3(0, 0, -10);
+                    // transform.position = Vector2.zero;
                     scriptBird.Stop();
                     scriptBird.transform.position =
                         new Vector2(scriptBird.transform.position.x - gameConfig.mapSize.x * 2,
