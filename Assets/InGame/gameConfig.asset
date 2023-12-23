@@ -18,6 +18,7 @@ MonoBehaviour:
   groundHeight: -2.99
   aboveFireSpeed: {x: 0, y: 1}
   fireTime: 0.3
-  fireRangeMin: -9
-  fireRangeMax: 6
+  fireRangeMin: -10
+  fireRangeMax: 30
   fireWidth: 1
+  switchTime: 1.38

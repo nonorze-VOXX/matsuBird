@@ -14,5 +14,6 @@ namespace InGame
         public float fireRangeMin;
         public float fireRangeMax;
         public float fireWidth;
+        public float switchTime;
     }
 }

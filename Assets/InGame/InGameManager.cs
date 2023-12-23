@@ -8,7 +8,7 @@ namespace InGame
     {
         Prepare,
         Flying,
-        Eating
+        NextMap
     }
 
     internal enum groundState
@@ -32,7 +32,9 @@ namespace InGame
 
         private float fireTime;
         private GameFlowState gameFlowState;
+        private Vector2 pastPosition = new(0, 0);
         private Bird scriptBird;
+        private float switchTimer;
 
         private void Awake()
         {
@@ -46,6 +48,8 @@ namespace InGame
             newMap();
             SwitchState(GameFlowState.Prepare);
             fireWallHint = Instantiate(fireWallPrefab, transform);
+            transform.position =
+                pastPosition - new Vector2(gameConfig.mapSize.x * 2, 0);
         }
 
         private void Update()
@@ -72,6 +76,7 @@ namespace InGame
                                 if (fireWall.transform.position.x.Equals(fireWallHint.transform.position.x))
                                 {
                                     mapState[index] = groundState.FireWall;
+                                    mapState[index - fireWalls.Count / 2] = groundState.FireWall;
                                     fireWallHint.SetActive(false);
                                     UpdateMapState();
                                     break;
@@ -97,7 +102,7 @@ namespace InGame
                             {
                                 if (i - 1 >= 0)
                                     fireIndex.Add(i - 1);
-                                if (i + 1 < fires.Count)
+                                if (i + 1 < fires.Count / 2)
                                     fireIndex.Add(i + 1);
                             }
                         }
@@ -108,8 +113,17 @@ namespace InGame
                         UpdateMapState();
                     }
 
+                    if (scriptBird.gameObject.transform.position.x > gameConfig.mapSize.x)
+                        SwitchState(GameFlowState.NextMap);
+
                     break;
-                case GameFlowState.Eating:
+                case GameFlowState.NextMap:
+                    switchTimer += Time.deltaTime;
+                    transform.position = Vector2.Lerp(pastPosition,
+                        pastPosition - new Vector2(gameConfig.mapSize.x * 2, 0),
+                        switchTimer / gameConfig.switchTime);
+                    if (switchTimer > gameConfig.switchTime)
+                        SwitchState(GameFlowState.Prepare);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -155,19 +169,29 @@ namespace InGame
             {
                 case GameFlowState.Prepare:
                     scriptBird.Stop();
-                    var firenumber = 0; //Random.Range(0, fires.Count);
-                    foreach (var fire in fires) fire.gameObject.SetActive(false);
-
-                    fires[firenumber].gameObject.SetActive(true);
+                    var firenumber = fires.Count / 2 + 1; //Random.Range(0, fires.Count);
+                    // transform.position = pastPosition;
+                    // foreach (var fire in fires) fire.gameObject.SetActive(false);
                     mapState[firenumber] = groundState.Fire;
+                    mapState[firenumber - fires.Count / 2] = groundState.Fire;
+                    UpdateMapState();
                     break;
                 case GameFlowState.Flying:
 
+                    for (var i = 0; i < mapState.Count; i++)
+                        if (i < mapState.Count / 2)
+                            mapState[i] = mapState[i + mapState.Count / 2];
+                        else
+                            mapState[i] = groundState.Normal;
                     fireWallHint.SetActive(false);
                     scriptBird.Fly();
                     fireTime = 0;
+                    transform.position = new Vector2(0, 0);
                     break;
-                case GameFlowState.Eating:
+                case GameFlowState.NextMap:
+                    scriptBird.Stop();
+                    pastPosition = transform.position;
+                    switchTimer = 0;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
