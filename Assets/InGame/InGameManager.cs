@@ -16,6 +16,7 @@ namespace InGame
     {
         Normal,
         Fire,
+        Food,
         FireWall
     }
 
@@ -28,9 +29,12 @@ namespace InGame
         public List<Fire> fires = new();
         public GameObject fireWallPrefab;
         public GameObject fireWallHint;
-        private readonly List<GameObject> fireWalls = new();
-        private readonly List<groundState> mapState = new();
+        public GameObject foodPrefab;
 
+        public Camera mainCamera;
+        private readonly List<GameObject> fireWalls = new();
+        private readonly List<GameObject> foods = new();
+        private readonly List<groundState> mapState = new();
         private float fireTime;
         private GameFlowState gameFlowState;
         private Vector2 pastPosition = new(0, 0);
@@ -39,6 +43,7 @@ namespace InGame
 
         private void Awake()
         {
+            mainCamera = Camera.main;
             var birdGO = Instantiate(birdPrefab, transform);
             birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
             gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x;
@@ -98,7 +103,7 @@ namespace InGame
                     {
                         fireTime = 0;
                         List<int> fireIndex = new();
-                        for (var i = 0; i < mapState.Count; i++)
+                        for (var i = 0; i < mapState.Count / 2; i++)
                         {
                             if (mapState[i] == groundState.FireWall)
                                 continue;
@@ -153,6 +158,11 @@ namespace InGame
                 fireWall.SetActive(false);
                 fireWalls.Add(fireWall);
 
+                var food = Instantiate(foodPrefab, transform);
+                food.transform.position = new Vector3(i, gameConfig.groundHeight, 0);
+                food.gameObject.SetActive(false);
+                foods.Add(food);
+
                 mapState.Add(groundState.Normal);
                 UpdateMapState();
             }
@@ -164,6 +174,7 @@ namespace InGame
             {
                 fires[i].gameObject.SetActive(mapState[i] == groundState.Fire);
                 fireWalls[i].gameObject.SetActive(mapState[i] == groundState.FireWall);
+                foods[i].gameObject.SetActive(mapState[i] == groundState.Food);
             }
         }
 
@@ -172,6 +183,7 @@ namespace InGame
             switch (state)
             {
                 case GameFlowState.Prepare:
+                    // mainCamera.transform.position = Vector2.zero;
                     transform.position = Vector2.zero;
                     scriptBird.Stop();
                     scriptBird.transform.position =
@@ -183,7 +195,10 @@ namespace InGame
                         else
                             mapState[i] = groundState.Normal;
                     var firenumber = Random.Range(fires.Count / 2 + 1, fires.Count);
+                    var foodnumber = Random.Range(fires.Count / 2 + 1, fires.Count);
+                    foodnumber = foodnumber == firenumber ? foodnumber + 1 : foodnumber;
                     mapState[firenumber] = groundState.Fire;
+                    mapState[foodnumber] = groundState.Food;
                     UpdateMapState();
                     break;
                 case GameFlowState.Flying:
