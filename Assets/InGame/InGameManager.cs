@@ -11,6 +11,13 @@ namespace InGame
         Eating
     }
 
+    internal enum groundState
+    {
+        Normal,
+        Fire,
+        FireWall
+    }
+
     public class InGameManager : MonoBehaviour
     {
         public GameObject birdPrefab;
@@ -21,6 +28,7 @@ namespace InGame
         public GameObject fireWallPrefab;
         public GameObject fireWallHint;
         private readonly List<GameObject> fireWalls = new();
+        private readonly List<groundState> mapState = new();
 
         private float fireTime;
         private GameFlowState gameFlowState;
@@ -37,6 +45,7 @@ namespace InGame
             scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
             newMap();
             SwitchState(GameFlowState.Prepare);
+            fireWallHint = Instantiate(fireWallPrefab, transform);
         }
 
         private void Update()
@@ -48,18 +57,28 @@ namespace InGame
                     if (Input.GetKeyDown(KeyCode.Space))
                         SwitchState(GameFlowState.Flying);
                     if (Input.GetKeyDown(KeyCode.Q))
-                        if (fireWallHint == null)
-                            fireWallHint = Instantiate(fireWallPrefab, transform);
+                        fireWallHint.SetActive(true);
 
-                    if (fireWallHint != null)
+                    if (fireWallHint.activeSelf)
                     {
                         var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         fireWallHint.transform.position =
                             new Vector2(Mathf.Round(worldPosition.x), gameConfig.groundHeight);
                         if (Input.GetKeyDown(KeyCode.Mouse0))
                         {
-                            fireWalls.Add(fireWallHint);
-                            fireWallHint = null;
+                            var index = 0;
+                            foreach (var fireWall in fireWalls)
+                            {
+                                if (fireWall.transform.position.x.Equals(fireWallHint.transform.position.x))
+                                {
+                                    mapState[index] = groundState.FireWall;
+                                    fireWallHint.SetActive(false);
+                                    UpdateMapState();
+                                    break;
+                                }
+
+                                index++;
+                            }
                         }
                     }
 
@@ -70,17 +89,23 @@ namespace InGame
                     {
                         fireTime = 0;
                         List<int> fireIndex = new();
-                        for (var i = 0; i < fires.Count; i++)
+                        for (var i = 0; i < mapState.Count; i++)
                         {
-                            if (fires[i].GetUsed() || !fires[i].gameObject.activeSelf || fires[i].GetInWall()) continue;
-                            if (i - 1 >= 0)
-                                fireIndex.Add(i - 1);
-                            if (i + 1 < fires.Count)
-                                fireIndex.Add(i + 1);
-                            fires[i].SetUesd(true);
+                            if (mapState[i] == groundState.FireWall)
+                                continue;
+                            if (mapState[i] == groundState.Fire)
+                            {
+                                if (i - 1 >= 0)
+                                    fireIndex.Add(i - 1);
+                                if (i + 1 < fires.Count)
+                                    fireIndex.Add(i + 1);
+                            }
                         }
 
-                        foreach (var i in fireIndex) fires[i].gameObject.SetActive(true);
+                        foreach (var i in fireIndex)
+                            if (mapState[i] != groundState.FireWall)
+                                mapState[i] = groundState.Fire;
+                        UpdateMapState();
                     }
 
                     break;
@@ -91,15 +116,36 @@ namespace InGame
             }
         }
 
+
         private void newMap()
         {
+            mapState.Clear();
             for (var i = gameConfig.fireRangeMin + gameConfig.fireWidth;
                  i < gameConfig.fireRangeMax;
                  i += gameConfig.fireWidth)
             {
                 var fire = Instantiate(firePrefab, transform);
+
                 fire.transform.position = new Vector3(i, gameConfig.groundHeight, 0);
                 fires.Add(fire.GetComponent<Fire>());
+
+                var fireWall = Instantiate(fireWallPrefab, transform);
+                fireWall.transform.position =
+                    new Vector2(i, gameConfig.groundHeight);
+                fireWall.SetActive(false);
+                fireWalls.Add(fireWall);
+
+                mapState.Add(groundState.Normal);
+                UpdateMapState();
+            }
+        }
+
+        private void UpdateMapState()
+        {
+            for (var i = 0; i < mapState.Count; i++)
+            {
+                fires[i].gameObject.SetActive(mapState[i] == groundState.Fire);
+                fireWalls[i].gameObject.SetActive(mapState[i] == groundState.FireWall);
             }
         }
 
@@ -110,15 +156,14 @@ namespace InGame
                 case GameFlowState.Prepare:
                     scriptBird.Stop();
                     var firenumber = 0; //Random.Range(0, fires.Count);
-                    foreach (var fire in fires)
-                    {
-                        fire.Reset();
-                        fire.gameObject.SetActive(false);
-                    }
+                    foreach (var fire in fires) fire.gameObject.SetActive(false);
 
                     fires[firenumber].gameObject.SetActive(true);
+                    mapState[firenumber] = groundState.Fire;
                     break;
                 case GameFlowState.Flying:
+
+                    fireWallHint.SetActive(false);
                     scriptBird.Fly();
                     fireTime = 0;
                     break;

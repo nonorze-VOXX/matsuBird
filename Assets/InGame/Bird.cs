@@ -24,7 +24,7 @@ namespace InGame
         {
             collider2D = GetComponent<Collider2D>();
             rigidbody2D = GetComponent<Rigidbody2D>();
-            state = BirdState.Stop;
+        SetState(BirdState.Stop);
         }
 
         private void Start()
@@ -36,6 +36,8 @@ namespace InGame
             switch (state)
             {
                 case BirdState.Stop:
+                break;
+                    
                 case BirdState.Fly:
                     if (aboveFire == 0)
                         rigidbody2D.velocity = initSpeed;
