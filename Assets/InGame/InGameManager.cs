@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace InGame
 {
@@ -45,11 +46,15 @@ namespace InGame
             scriptBird = birdGO.GetComponent<Bird>();
             scriptBird.SetInitSpeed(gameConfig.birdSpeed);
             scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
+            scriptBird.Stop();
             newMap();
-            SwitchState(GameFlowState.Prepare);
+            gameFlowState = GameFlowState.Prepare;
+            transform.position = Vector2.zero;
+            for (var i = mapState.Count / 2; i < mapState.Count; i++) mapState[i] = groundState.Normal;
             fireWallHint = Instantiate(fireWallPrefab, transform);
-            transform.position =
-                pastPosition - new Vector2(gameConfig.mapSize.x * 2, 0);
+            mapState[1] = groundState.Fire;
+            mapState[1 + mapState.Count / 2] = groundState.Fire;
+            UpdateMapState();
         }
 
         private void Update()
@@ -76,7 +81,6 @@ namespace InGame
                                 if (fireWall.transform.position.x.Equals(fireWallHint.transform.position.x))
                                 {
                                     mapState[index] = groundState.FireWall;
-                                    mapState[index - fireWalls.Count / 2] = groundState.FireWall;
                                     fireWallHint.SetActive(false);
                                     UpdateMapState();
                                     break;
@@ -168,21 +172,22 @@ namespace InGame
             switch (state)
             {
                 case GameFlowState.Prepare:
+                    transform.position = Vector2.zero;
                     scriptBird.Stop();
-                    var firenumber = fires.Count / 2 + 1; //Random.Range(0, fires.Count);
-                    // transform.position = pastPosition;
-                    // foreach (var fire in fires) fire.gameObject.SetActive(false);
-                    mapState[firenumber] = groundState.Fire;
-                    mapState[firenumber - fires.Count / 2] = groundState.Fire;
-                    UpdateMapState();
-                    break;
-                case GameFlowState.Flying:
-
+                    scriptBird.transform.position =
+                        new Vector2(scriptBird.transform.position.x - gameConfig.mapSize.x * 2,
+                            scriptBird.transform.position.y);
                     for (var i = 0; i < mapState.Count; i++)
                         if (i < mapState.Count / 2)
                             mapState[i] = mapState[i + mapState.Count / 2];
                         else
                             mapState[i] = groundState.Normal;
+                    var firenumber = Random.Range(fires.Count / 2 + 1, fires.Count);
+                    mapState[firenumber] = groundState.Fire;
+                    UpdateMapState();
+                    break;
+                case GameFlowState.Flying:
+
                     fireWallHint.SetActive(false);
                     scriptBird.Fly();
                     fireTime = 0;
