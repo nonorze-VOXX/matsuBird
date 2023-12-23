@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8127483feb1149c1a966fe6e85d59641, type: 3}
   m_Name: gameConfig
   m_EditorClassIdentifier: 
-  birdSpeed: {x: 1, y: -0.1}
+  birdSpeed: {x: 4, y: -1.5}
   birdEnterPosition: {x: -10, y: 2}
   mapSize: {x: 10, y: 5}
-  groundHeight: 0
-  aboveFireSpeed: {x: 0, y: 0.2}
+  groundHeight: -2.5
+  aboveFireSpeed: {x: 0, y: 1}

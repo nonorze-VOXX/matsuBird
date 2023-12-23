@@ -14,16 +14,19 @@ namespace InGame
         {
             collider2D = GetComponent<Collider2D>();
             rigidbody2D = GetComponent<Rigidbody2D>();
-            Debug.Log(rigidbody2D);
+        }
+
+        private void Start()
+        {
+            rigidbody2D.velocity = initSpeed;
         }
 
         private void Update()
         {
-            Debug.Log(aboveFire);
             if (aboveFire == 0)
                 rigidbody2D.velocity = initSpeed;
             else
-                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,aboveFireSpeed.y);
+                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, aboveFireSpeed.y);
         }
 
         public void EnterFire()

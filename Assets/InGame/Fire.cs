@@ -1,20 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-namespace InGame
+public class Fire : MonoBehaviour
 {
-    public class Fire : MonoBehaviour
-    {
-        
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            Debug.Log(other.name);
-            if (other.CompareTag("bird")) other.GetComponent<bird>().EnterFire();
-        }
+    private bool inWall=false;
 
-        private void OnTriggerExit2D(Collider2D other)
-        {
-            if (other.CompareTag("bird")) other.GetComponent<bird>().ExitFire();
-            ;
-        }
+    public void Reset()
+    {
+        inWall = false;
+    }
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (!inWall && other.CompareTag("Wall")) inWall = true;
     }
 }
