@@ -10,5 +10,9 @@ namespace InGame
         public Vector2 mapSize;
         public float groundHeight;
         public Vector2 aboveFireSpeed;
+        public float fireTime;
+        public float fireRangeMin;
+        public float fireRangeMax;
+        public float fireWidth;
     }
 }

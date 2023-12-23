@@ -2,25 +2,34 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
-    private bool inWall=false;
+    private bool inWall;
+    private bool used;
 
     public void Reset()
     {
         inWall = false;
+        used = false;
     }
 
-    // Start is called before the first frame update
-    private void Start()
+    private void OnTriggerStay2D(Collider2D other)
     {
+        Debug.Log(other.name);
+        if (other.CompareTag("Wall")) inWall = true;
     }
 
-    // Update is called once per frame
-    private void Update()
+    public bool GetUsed()
     {
+        return used;
     }
 
-    private void OnTriggerStay(Collider other)
+    public void SetUesd(bool used)
+
     {
-        if (!inWall && other.CompareTag("Wall")) inWall = true;
+        this.used = used;
+    }
+
+    public bool GetInWall()
+    {
+        return inWall;
     }
 }

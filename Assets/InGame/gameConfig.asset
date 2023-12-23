@@ -15,5 +15,9 @@ MonoBehaviour:
   birdSpeed: {x: 4, y: -1.5}
   birdEnterPosition: {x: -10, y: 2}
   mapSize: {x: 10, y: 5}
-  groundHeight: -2.5
+  groundHeight: -2.99
   aboveFireSpeed: {x: 0, y: 1}
+  fireTime: 0.3
+  fireRangeMin: -9
+  fireRangeMax: 6
+  fireWidth: 1
