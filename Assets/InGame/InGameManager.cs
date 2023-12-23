@@ -60,6 +60,7 @@ namespace InGame
             fireWallHint = Instantiate(fireWallPrefab, transform);
             mapState[1] = groundState.Fire;
             mapState[1 + mapState.Count / 2] = groundState.Fire;
+            mapState[mapState.Count / 2 - 3] = groundState.Food;
             UpdateMapState();
         }
 
@@ -148,7 +149,7 @@ namespace InGame
         private void newMap()
         {
             mapState.Clear();
-            for (var i = gameConfig.fireRangeMin + gameConfig.fireWidth;
+            for (var i = gameConfig.fireRangeMin;
                  i < gameConfig.fireRangeMax;
                  i += gameConfig.fireWidth)
             {
@@ -201,7 +202,7 @@ namespace InGame
                             mapState[i] = groundState.Normal;
                     var firenumber = Random.Range(fires.Count / 2 + 1, fires.Count);
                     var foodnumber = Random.Range(fires.Count / 2 + 1, fires.Count);
-                    foodnumber = foodnumber == firenumber ? foodnumber + 1 : foodnumber;
+                    foodnumber = foodnumber == firenumber ? foodnumber + 2 : foodnumber;
                     mapState[firenumber] = groundState.Fire;
                     mapState[foodnumber] = groundState.Food;
                     UpdateMapState();

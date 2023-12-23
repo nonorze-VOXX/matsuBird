@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7672365151784884600}
   m_Layer: 0
   m_Name: food
-  m_TagString: Untagged
+  m_TagString: goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
