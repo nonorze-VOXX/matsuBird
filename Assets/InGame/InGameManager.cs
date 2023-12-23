@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace InGame
 {
@@ -9,7 +8,6 @@ namespace InGame
     {
         Prepare,
         Flying,
-        Landing,
         Eating
     }
 
@@ -20,21 +18,25 @@ namespace InGame
         public Rigidbody2D birdRigidbody2D;
         public GameObject firePrefab;
         public List<Fire> fires = new();
+        public GameObject fireWallPrefab;
+        public GameObject fireWallHint;
+        private readonly List<GameObject> fireWalls = new();
 
         private float fireTime;
         private GameFlowState gameFlowState;
+        private Bird scriptBird;
 
         private void Awake()
         {
-            var bird = Instantiate(birdPrefab, transform);
-            birdRigidbody2D = bird.GetComponent<Rigidbody2D>();
+            var birdGO = Instantiate(birdPrefab, transform);
+            birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
             gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x;
-            bird.transform.position = gameConfig.birdEnterPosition;
-            var scriptBird = bird.GetComponent<bird>();
+            birdGO.transform.position = gameConfig.birdEnterPosition;
+            scriptBird = birdGO.GetComponent<Bird>();
             scriptBird.SetInitSpeed(gameConfig.birdSpeed);
             scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
-            gameFlowState = GameFlowState.Prepare;
             newMap();
+            SwitchState(GameFlowState.Prepare);
         }
 
         private void Update()
@@ -42,15 +44,25 @@ namespace InGame
             switch (gameFlowState)
             {
                 case GameFlowState.Prepare:
-                    var firenumber = Random.Range(0, fires.Count);
-                    foreach (var fire in fires)
+                    // SwtchState(GameFlowState.Flying);
+                    if (Input.GetKeyDown(KeyCode.Space))
+                        SwitchState(GameFlowState.Flying);
+                    if (Input.GetKeyDown(KeyCode.Q))
+                        if (fireWallHint == null)
+                            fireWallHint = Instantiate(fireWallPrefab, transform);
+
+                    if (fireWallHint != null)
                     {
-                        fire.Reset();
-                        fire.gameObject.SetActive(false);
+                        var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        fireWallHint.transform.position =
+                            new Vector2(Mathf.Round(worldPosition.x), gameConfig.groundHeight);
+                        if (Input.GetKeyDown(KeyCode.Mouse0))
+                        {
+                            fireWalls.Add(fireWallHint);
+                            fireWallHint = null;
+                        }
                     }
 
-                    fires[firenumber].gameObject.SetActive(true);
-                    SwitchState(GameFlowState.Flying);
                     break;
                 case GameFlowState.Flying:
                     fireTime += Time.deltaTime;
@@ -71,8 +83,6 @@ namespace InGame
                         foreach (var i in fireIndex) fires[i].gameObject.SetActive(true);
                     }
 
-                    break;
-                case GameFlowState.Landing:
                     break;
                 case GameFlowState.Eating:
                     break;
@@ -95,8 +105,30 @@ namespace InGame
 
         private void SwitchState(GameFlowState state)
         {
+            switch (state)
+            {
+                case GameFlowState.Prepare:
+                    scriptBird.Stop();
+                    var firenumber = 0; //Random.Range(0, fires.Count);
+                    foreach (var fire in fires)
+                    {
+                        fire.Reset();
+                        fire.gameObject.SetActive(false);
+                    }
+
+                    fires[firenumber].gameObject.SetActive(true);
+                    break;
+                case GameFlowState.Flying:
+                    scriptBird.Fly();
+                    fireTime = 0;
+                    break;
+                case GameFlowState.Eating:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
+            }
+
             gameFlowState = state;
-            fireTime = 0;
         }
     }
 }

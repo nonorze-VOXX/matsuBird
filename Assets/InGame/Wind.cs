@@ -7,12 +7,12 @@ namespace InGame
         private void OnTriggerEnter2D(Collider2D other)
         {
             Debug.Log(other.name);
-            if (other.CompareTag("bird")) other.GetComponent<bird>().EnterFire();
+            if (other.CompareTag("bird")) other.GetComponent<Bird>().EnterFire();
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.CompareTag("bird")) other.GetComponent<bird>().ExitFire();
+            if (other.CompareTag("bird")) other.GetComponent<Bird>().ExitFire();
         }
     }
 }

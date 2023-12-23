@@ -6,10 +6,11 @@ namespace InGame
     internal enum BirdState
     {
         Fly,
-        Land
+        Land,
+        Stop
     }
 
-    public class bird : MonoBehaviour
+    public class Bird : MonoBehaviour
     {
         private int aboveFire;
         private Vector2 aboveFireSpeed;
@@ -23,18 +24,18 @@ namespace InGame
         {
             collider2D = GetComponent<Collider2D>();
             rigidbody2D = GetComponent<Rigidbody2D>();
-            state = BirdState.Fly;
+            state = BirdState.Stop;
         }
 
         private void Start()
         {
-            rigidbody2D.velocity = initSpeed;
         }
 
         private void Update()
         {
             switch (state)
             {
+                case BirdState.Stop:
                 case BirdState.Fly:
                     if (aboveFire == 0)
                         rigidbody2D.velocity = initSpeed;
@@ -42,7 +43,6 @@ namespace InGame
                         rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, aboveFireSpeed.y);
                     break;
                 case BirdState.Land:
-                    rigidbody2D.velocity = Vector2.zero;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -57,6 +57,21 @@ namespace InGame
 
         private void SetState(BirdState state)
         {
+            switch (state)
+            {
+                case BirdState.Fly:
+                    rigidbody2D.velocity = initSpeed;
+                    break;
+                case BirdState.Land:
+                    rigidbody2D.velocity = Vector2.zero;
+                    break;
+                case BirdState.Stop:
+                    rigidbody2D.velocity = Vector2.zero;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
+            }
+
             this.state = state;
         }
 
@@ -78,6 +93,16 @@ namespace InGame
         public void SetAboveFireSpeed(Vector2 gameConfigAboveFireSpeed)
         {
             aboveFireSpeed = gameConfigAboveFireSpeed;
+        }
+
+        public void Stop()
+        {
+            SetState(BirdState.Stop);
+        }
+
+        public void Fly()
+        {
+            SetState(BirdState.Fly);
         }
     }
 }
