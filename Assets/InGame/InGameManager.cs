@@ -54,6 +54,7 @@ namespace InGame
             scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
             scriptBird.Stop();
             scriptBird.SetHp(gameConfig.initHp);
+            scriptBird.AddFoodListener(FoodDisappear);
             scriptBird.gameConfig = gameConfig;
             newMap();
             gameFlowState = GameFlowState.Prepare;
@@ -66,6 +67,7 @@ namespace InGame
             mapState[mapState.Count / 2 - 3] = groundState.Food;
             UpdateMapState();
         }
+
 
         private void Update()
         {
@@ -198,6 +200,12 @@ namespace InGame
                 fireWalls[i].gameObject.SetActive(mapState[i] == groundState.FireWall);
                 foods[i].gameObject.SetActive(mapState[i] == groundState.Food);
             }
+        }
+
+        private void FoodDisappear(GameObject arg0)
+        {
+            mapState[foods.IndexOf(arg0)] = groundState.Normal;
+            UpdateMapState();
         }
 
         private void SwitchState(GameFlowState state)

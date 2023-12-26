@@ -18,5 +18,6 @@ namespace InGame
         public float initHp;
         public float flyToSkyHp;
         public float flyToSkyTime;
+        public float foodHp;
     }
 }

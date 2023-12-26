@@ -22,6 +22,7 @@ MonoBehaviour:
   fireRangeMax: 30
   fireWidth: 1
   switchTime: 1.38
-  initHp: 10
+  initHp: 100
   flyToSkyHp: 60
   flyToSkyTime: 1
+  foodHp: 60

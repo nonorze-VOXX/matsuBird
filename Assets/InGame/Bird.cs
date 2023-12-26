@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace InGame
 {
@@ -16,6 +17,7 @@ namespace InGame
         private int aboveFire;
         private Vector2 aboveFireSpeed;
         private Collider2D collider2D;
+        private readonly UnityEvent<GameObject> getFood = new();
         private float hp;
         private Vector2 initSpeed;
 
@@ -71,6 +73,16 @@ namespace InGame
         {
             if (other.transform.CompareTag("ground") && state != BirdState.Die)
                 SetState(BirdState.Land);
+            if (other.transform.CompareTag("food") && state != BirdState.Die)
+            {
+                hp += gameConfig.foodHp;
+                getFood.Invoke(other.gameObject);
+            }
+        }
+
+        public void AddFoodListener(UnityAction<GameObject> call)
+        {
+            getFood.AddListener(call);
         }
 
         public void SetHp(float ghp)
