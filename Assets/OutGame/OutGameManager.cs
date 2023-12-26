@@ -12,5 +12,6 @@ public class OutGameManager : Singleton<OutGameManager>
 
     public void StartGame()
     {
+        Debug.Log("press space");
     }
 }
