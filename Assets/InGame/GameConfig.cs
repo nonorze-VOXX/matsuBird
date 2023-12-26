@@ -15,5 +15,8 @@ namespace InGame
         public float fireRangeMax;
         public float fireWidth;
         public float switchTime;
+        public float initHp;
+        public float flyToSkyHp;
+        public float flyToSkyTime;
     }
 }

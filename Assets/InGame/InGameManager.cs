@@ -32,6 +32,7 @@ namespace InGame
         public GameObject foodPrefab;
 
         public Camera mainCamera;
+        public GameObject hpBar;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -52,6 +53,8 @@ namespace InGame
             scriptBird.SetInitSpeed(gameConfig.birdSpeed);
             scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
             scriptBird.Stop();
+            scriptBird.SetHp(gameConfig.initHp);
+            scriptBird.gameConfig = gameConfig;
             newMap();
             gameFlowState = GameFlowState.Prepare;
             transform.position = Vector2.zero;
@@ -66,6 +69,7 @@ namespace InGame
 
         private void Update()
         {
+            UpdateHpBar();
             switch (gameFlowState)
             {
                 case GameFlowState.Prepare:
@@ -143,6 +147,18 @@ namespace InGame
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void UpdateHpBar()
+        {
+            var bg = hpBar.GetComponent<RectTransform>().rect.width;
+            var hpInner = hpBar.transform.GetChild(0).GetComponent<RectTransform>();
+            // var rect = hpInner.rect;
+            // rect.xMax = scriptBird.GetHp() / gameConfig.initHp * bg;
+            // hpInner.rect = rect;
+            var deltax = (scriptBird.GetHp() / gameConfig.initHp - 1) * bg;
+            print(deltax);
+            hpInner.sizeDelta = new Vector2(deltax, 0);
         }
 
 
