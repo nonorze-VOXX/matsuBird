@@ -23,5 +23,5 @@ MonoBehaviour:
   fireWidth: 1
   switchTime: 1.38
   initHp: 10
-  flyToSkyHp: 0
+  flyToSkyHp: 60
   flyToSkyTime: 1

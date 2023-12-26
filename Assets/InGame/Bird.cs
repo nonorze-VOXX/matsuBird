@@ -7,7 +7,8 @@ namespace InGame
     {
         Fly,
         Land,
-        Stop
+        Stop,
+        Die
     }
 
     public class Bird : MonoBehaviour
@@ -43,23 +44,23 @@ namespace InGame
 
                 case BirdState.Fly:
                     hp -= Time.deltaTime;
-                    if (hp <= 0)
-                    {
-                        //TODO die
-                    }
 
                     if (aboveFire == 0)
                         rigidbody2D.velocity = initSpeed;
                     else
                         rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, aboveFireSpeed.y);
+                    if (hp <= 0) SetState(BirdState.Die);
                     break;
                 case BirdState.Land:
                     var pos = transform.position;
                     timer += Time.deltaTime;
                     pos.y = +Mathf.Lerp(gameConfig.groundHeight + collider2D.bounds.extents.y,
-                        gameConfig.birdEnterPosition.y, timer / gameConfig.flyToSkyTime);
+                        (gameConfig.birdEnterPosition.y - gameConfig.groundHeight) / 2 + gameConfig.groundHeight,
+                        timer / gameConfig.flyToSkyTime);
                     transform.position = pos;
                     if (timer >= gameConfig.flyToSkyTime) SetState(BirdState.Fly);
+                    break;
+                case BirdState.Die:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -68,7 +69,7 @@ namespace InGame
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.transform.CompareTag("ground"))
+            if (other.transform.CompareTag("ground") && state != BirdState.Die)
                 SetState(BirdState.Land);
         }
 
@@ -91,6 +92,9 @@ namespace InGame
                     break;
                 case BirdState.Stop:
                     rigidbody2D.velocity = Vector2.zero;
+                    break;
+                case BirdState.Die:
+                    rigidbody2D.velocity = Vector2.down;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
