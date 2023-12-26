@@ -1,17 +1,35 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    private FSM fsm;
+
+    private void Start()
+    {
+        fsm.Setup();
+    }
+
     protected override void _Awake()
     {
         base._Awake();
+        DontDestroyOnLoad(gameObject);
+        fsm = new FSM01();
+        fsm.Setup();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    public void StartGame()
+    private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
     {
-        throw new NotImplementedException();
+        // switch (arg0.name)
+        // {
+        //     case "WelcomePage":
+        fsm = new FSM02();
+        //         break;
+        // }
+    }
+
+    public void UpdateFSM()
+    {
+        fsm.Setup();
     }
 }
