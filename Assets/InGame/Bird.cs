@@ -14,14 +14,16 @@ namespace InGame
 
     public class Bird : MonoBehaviour
     {
+        public BirdPictureObject birdPictureObject;
+        private readonly UnityEvent<GameObject> getFood = new();
         private int aboveFire;
         private Vector2 aboveFireSpeed;
         private Collider2D collider2D;
-        private readonly UnityEvent<GameObject> getFood = new();
         private float hp;
         private Vector2 initSpeed;
 
         private Rigidbody2D rigidbody2D;
+        private SpriteRenderer spriteRenderer;
         private BirdState state = BirdState.Fly;
         private float timer;
         public GameConfig gameConfig { get; set; }
@@ -30,11 +32,13 @@ namespace InGame
         {
             collider2D = GetComponent<Collider2D>();
             rigidbody2D = GetComponent<Rigidbody2D>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
             SetState(BirdState.Stop);
         }
 
         private void Start()
         {
+            UpdateBirdSprite();
         }
 
         private void Update()
@@ -80,6 +84,13 @@ namespace InGame
             }
         }
 
+        private void UpdateBirdSprite()
+        {
+            var birdPicture = (int)gameConfig.birdType * 2 + (int)gameConfig.birdPictureState;
+            Debug.Log(birdPicture);
+            spriteRenderer.sprite = birdPictureObject.birdPicture[birdPicture];
+        }
+
         public void AddFoodListener(UnityAction<GameObject> call)
         {
             getFood.AddListener(call);
@@ -96,11 +107,15 @@ namespace InGame
             {
                 case BirdState.Fly:
                     rigidbody2D.velocity = initSpeed;
+                    gameConfig.birdPictureState = BirdPictureState.fly;
+                    UpdateBirdSprite();
                     break;
                 case BirdState.Land:
                     rigidbody2D.velocity = Vector2.zero;
                     hp -= gameConfig.flyToSkyHp;
                     timer = 0;
+                    gameConfig.birdPictureState = BirdPictureState.stand;
+                    UpdateBirdSprite();
                     break;
                 case BirdState.Stop:
                     rigidbody2D.velocity = Vector2.zero;

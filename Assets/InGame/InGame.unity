@@ -559,7 +559,7 @@ MonoBehaviour:
   fireWallPrefab: {fileID: 9194951148570691813, guid: 1a2a19cc1011f33468865871b319c960, type: 3}
   fireWallHint: {fileID: 0}
   foodPrefab: {fileID: 7672365151784884603, guid: 2f9ffab5d83f7b0448948016c8f3c458, type: 3}
-  mainCamera: {fileID: 0}
+  mainCamera: {fileID: 1235892505}
   hpBar: {fileID: 1479032081}
 --- !u!1 &1022473520
 GameObject:

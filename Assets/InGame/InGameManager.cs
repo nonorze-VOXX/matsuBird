@@ -45,6 +45,8 @@ namespace InGame
         private void Awake()
         {
             mainCamera = Camera.main;
+            Debug.Log(birdPrefab);
+            Debug.Log(transform);
             var birdGO = Instantiate(birdPrefab, transform);
             birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
             gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x;

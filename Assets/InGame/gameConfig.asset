@@ -26,3 +26,5 @@ MonoBehaviour:
   flyToSkyHp: 60
   flyToSkyTime: 1
   foodHp: 60
+  birdPictureState: 1
+  birdType: 3
