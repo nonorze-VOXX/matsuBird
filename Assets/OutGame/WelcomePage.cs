@@ -7,9 +7,23 @@ namespace DefaultNamespace
     public class WelcomePage : MonoBehaviour
     {
         public TMP_Text welcomeText;
+        private AudioSource audioSource;
+        public AudioClip audioClip;
+
+        private void Awake()
+        {
+            audioSource = transform.Find("Audio Source")?.GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                Debug.LogError("auto not work");
+                this.enabled = false;
+            }
+        }
+
         private void Start()
         {
             welcomeText.text = "Welcome to the game!";
+            audioSource.PlayOneShot(audioClip);
         }
 
         private void Update()
