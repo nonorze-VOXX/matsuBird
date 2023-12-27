@@ -1,0 +1,45 @@
+﻿using System;
+using TMPro;
+using UnityEngine;
+
+namespace DefaultNamespace
+{
+    public class WelcomePage : MonoBehaviour
+    {
+        public TMP_Text welcomeText;
+        private AudioSource audioSource;
+        public AudioClip audioClip;
+
+        private void Awake()
+        {
+            audioSource = transform.Find("Audio Source")?.GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                Debug.LogError("auto not work");
+                this.enabled = false;
+            }
+        }
+
+        private void Start()
+        {
+            welcomeText.text = "Welcome to the game!";
+            audioSource.PlayOneShot(audioClip);
+        }
+
+        private void Update()
+        {
+            float tmp = welcomeText.color.a;
+            tmp =0.5f * Mathf.Sin( 2.0f*Time.time)+0.5f;
+            welcomeText.color = new Color(
+                welcomeText.color.r,
+                welcomeText.color.g,
+                welcomeText.color.b,
+                tmp);
+            
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                OutGameManager.instance.StartGame();
+            }
+        }
+    }
+}
