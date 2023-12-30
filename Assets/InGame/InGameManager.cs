@@ -32,6 +32,7 @@ namespace InGame
         public GameObject foodPrefab;
 
         public Camera mainCamera;
+        public GameObject hpBar;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -44,6 +45,8 @@ namespace InGame
         private void Awake()
         {
             mainCamera = Camera.main;
+            Debug.Log(birdPrefab);
+            Debug.Log(transform);
             var birdGO = Instantiate(birdPrefab, transform);
             birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
             gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x;
@@ -52,6 +55,9 @@ namespace InGame
             scriptBird.SetInitSpeed(gameConfig.birdSpeed);
             scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
             scriptBird.Stop();
+            scriptBird.SetHp(gameConfig.initHp);
+            scriptBird.AddFoodListener(FoodDisappear);
+            scriptBird.gameConfig = gameConfig;
             newMap();
             gameFlowState = GameFlowState.Prepare;
             transform.position = Vector2.zero;
@@ -64,8 +70,10 @@ namespace InGame
             UpdateMapState();
         }
 
+
         private void Update()
         {
+            UpdateHpBar();
             switch (gameFlowState)
             {
                 case GameFlowState.Prepare:
@@ -145,6 +153,18 @@ namespace InGame
             }
         }
 
+        private void UpdateHpBar()
+        {
+            var bg = hpBar.GetComponent<RectTransform>().rect.width;
+            var hpInner = hpBar.transform.GetChild(0).GetComponent<RectTransform>();
+            // var rect = hpInner.rect;
+            // rect.xMax = scriptBird.GetHp() / gameConfig.initHp * bg;
+            // hpInner.rect = rect;
+            var deltax = (scriptBird.GetHp() / gameConfig.initHp - 1) * bg;
+            print(deltax);
+            hpInner.sizeDelta = new Vector2(deltax, 0);
+        }
+
 
         private void newMap()
         {
@@ -182,6 +202,12 @@ namespace InGame
                 fireWalls[i].gameObject.SetActive(mapState[i] == groundState.FireWall);
                 foods[i].gameObject.SetActive(mapState[i] == groundState.Food);
             }
+        }
+
+        private void FoodDisappear(GameObject arg0)
+        {
+            mapState[foods.IndexOf(arg0)] = groundState.Normal;
+            UpdateMapState();
         }
 
         private void SwitchState(GameFlowState state)
