@@ -8,4 +8,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WelcomePage.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/OutGame/Main.unity
+    guid: 7bcba5f488672e443bb6c47a4f02b3a2
+  - enabled: 1
+    path: Assets/InGame/InGame.unity
+    guid: 3230c480c3d5a944fabee518a0e27db8
+  - enabled: 1
+    path: Assets/OutGame/Team.unity
+    guid: 635b8c8132176cb41bf4fcaecb1cc55e
+  - enabled: 1
+    path: Assets/OutGame/loading.unity
+    guid: 64b57d41676b61e4ebdd84750d8bb4b0
   m_configObjects: {}
