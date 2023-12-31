@@ -64,10 +64,8 @@ namespace InGame
             mainCamera.transform.position = new Vector3(0, 0, -10);
             for (var i = mapState.Count / 2; i < mapState.Count; i++) mapState[i] = groundState.Normal;
             fireWallHint = Instantiate(fireWallPrefab, transform);
-            mapState[1] = groundState.Fire;
-            mapState[1 + mapState.Count / 2] = groundState.Fire;
-            mapState[mapState.Count / 2 - 3] = groundState.Food;
-            UpdateMapState();
+            SwitchState(GameFlowState.Prepare);
+            GenerateNextMap(mapState);
         }
 
 
@@ -153,18 +151,20 @@ namespace InGame
             }
         }
 
-        private void UpdateHpBar()
+        private void GenerateNextMap(List<groundState> mapState)
         {
-            var bg = hpBar.GetComponent<RectTransform>().rect.width;
-            var hpInner = hpBar.transform.GetChild(0).GetComponent<RectTransform>();
-            // var rect = hpInner.rect;
-            // rect.xMax = scriptBird.GetHp() / gameConfig.initHp * bg;
-            // hpInner.rect = rect;
-            var deltax = (scriptBird.GetHp() / gameConfig.initHp - 1) * bg;
-            print(deltax);
-            hpInner.sizeDelta = new Vector2(deltax, 0);
+            for (var i = 0; i < mapState.Count; i++)
+                if (i < mapState.Count / 2)
+                    mapState[i] = mapState[i + mapState.Count / 2];
+                else
+                    mapState[i] = groundState.Normal;
+            var firenumber = Random.Range(fires.Count / 2 + 1, fires.Count);
+            var foodnumber = Random.Range((int)(fires.Count * (float)(3 / 4)) + 1, fires.Count);
+            foodnumber = foodnumber == firenumber ? foodnumber + 2 : foodnumber;
+            mapState[firenumber] = groundState.Fire;
+            mapState[foodnumber] = groundState.Food;
+            UpdateMapState();
         }
-
 
         private void newMap()
         {
@@ -194,6 +194,15 @@ namespace InGame
             }
         }
 
+        private void UpdateHpBar()
+        {
+            var bg = hpBar.GetComponent<RectTransform>().rect.width;
+            var hpInner = hpBar.transform.GetChild(0).GetComponent<RectTransform>();
+            var deltax = (scriptBird.GetHp() / gameConfig.initHp - 1) * bg;
+            hpInner.sizeDelta = new Vector2(deltax, 0);
+        }
+
+
         private void UpdateMapState()
         {
             for (var i = 0; i < mapState.Count; i++)
@@ -219,19 +228,9 @@ namespace InGame
                     // transform.position = Vector2.zero;
                     scriptBird.Stop();
                     scriptBird.transform.position =
-                        new Vector2(scriptBird.transform.position.x - gameConfig.mapSize.x * 2,
+                        new Vector2(gameConfig.birdEnterPosition.x,
                             scriptBird.transform.position.y);
-                    for (var i = 0; i < mapState.Count; i++)
-                        if (i < mapState.Count / 2)
-                            mapState[i] = mapState[i + mapState.Count / 2];
-                        else
-                            mapState[i] = groundState.Normal;
-                    var firenumber = Random.Range(fires.Count / 2 + 1, fires.Count);
-                    var foodnumber = Random.Range(fires.Count / 2 + 1, fires.Count);
-                    foodnumber = foodnumber == firenumber ? foodnumber + 2 : foodnumber;
-                    mapState[firenumber] = groundState.Fire;
-                    mapState[foodnumber] = groundState.Food;
-                    UpdateMapState();
+                    GenerateNextMap(mapState);
                     break;
                 case GameFlowState.Flying:
 
