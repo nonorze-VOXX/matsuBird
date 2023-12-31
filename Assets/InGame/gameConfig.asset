@@ -22,3 +22,9 @@ MonoBehaviour:
   fireRangeMax: 30
   fireWidth: 1
   switchTime: 1.38
+  initHp: 100
+  flyToSkyHp: 60
+  flyToSkyTime: 1
+  foodHp: 60
+  birdPictureState: 1
+  birdType: 3

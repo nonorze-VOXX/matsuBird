@@ -6,7 +6,6 @@ namespace InGame
     {
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log(other.name);
             if (other.CompareTag("bird")) other.GetComponent<Bird>().EnterFire();
         }
 
