@@ -3,6 +3,7 @@ using UnityEngine;
 public class GaChaPage : Scene_manerger
 {
     // Start is called before the first frame update
+
     public override void Start()
     {
         

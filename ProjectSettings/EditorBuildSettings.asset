@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/OutGame/loading.unity
     guid: 64b57d41676b61e4ebdd84750d8bb4b0
+  - enabled: 1
+    path: Assets/OutGame/GaCha.unity
+    guid: a64bbeffbc20fbc41b145a29831ca98d
+  - enabled: 1
+    path: Assets/OutGame/BirdDetail.unity
+    guid: 07ec1ef01a9625043afd8f0d51256e78
   m_configObjects: {}
