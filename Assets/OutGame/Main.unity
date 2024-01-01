@@ -293,7 +293,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -9, y: 157}
+  m_AnchoredPosition: {x: -9, y: -88.3}
   m_SizeDelta: {x: 166.6154, y: 102.5588}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &151272305
@@ -1187,6 +1187,7 @@ MonoBehaviour:
   duckQuack: {fileID: 8300000, guid: cc168878343048243aebf7f26bc78791, type: 3}
   audioSourceSE: {fileID: 212639656}
   audioSourceBGM: {fileID: 1514796188}
+  birdData: {fileID: 11400000, guid: 92068147cc51f044cbf7ffd05f2b5ba2, type: 2}
 --- !u!4 &1581674575
 Transform:
   m_ObjectHideFlags: 0

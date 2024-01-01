@@ -1548,7 +1548,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50.95
+  m_fontSize: 72
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1652,7 +1652,6 @@ MonoBehaviour:
   firePrefab: {fileID: 7153658523175692109, guid: 5afc34d6369389f479222634782d58d9, type: 3}
   fires: []
   fireWallPrefab: {fileID: 9194951148570691813, guid: 1a2a19cc1011f33468865871b319c960, type: 3}
-  fireWallHint: {fileID: 0}
   foodPrefab: {fileID: 7672365151784884603, guid: 2f9ffab5d83f7b0448948016c8f3c458, type: 3}
   mainCamera: {fileID: 1235892505}
   hpBar: {fileID: 1479032081}
@@ -1660,6 +1659,7 @@ MonoBehaviour:
   StartButton: {fileID: 0}
   GameOverPanel: {fileID: 1044173683}
   GameWinPanel: {fileID: 1564861456}
+  birdData: {fileID: 11400000, guid: 92068147cc51f044cbf7ffd05f2b5ba2, type: 2}
 --- !u!1 &1022473520
 GameObject:
   m_ObjectHideFlags: 0

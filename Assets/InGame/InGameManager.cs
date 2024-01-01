@@ -40,6 +40,7 @@ namespace InGame
         public GameObject StartButton;
         public GameObject GameOverPanel;
         public GameObject GameWinPanel;
+        public BirdData birdData;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -86,7 +87,10 @@ namespace InGame
             for (var i = mapState.Count / 2; i < mapState.Count; i++) mapState[i] = groundState.Normal;
             SwitchState(GameFlowState.Prepare);
             GenerateNextMap(mapState);
+
+            if (birdData.teamBird.Count != 0 && birdData.teamBird[0] != null) Debug.Log(birdData.teamBird[0].name);
         }
+
 
         private void Update()
         {

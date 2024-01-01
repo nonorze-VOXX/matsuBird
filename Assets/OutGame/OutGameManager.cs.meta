@@ -3,7 +3,11 @@ guid: bf144e3a3ffe43c43b73137155da2c32
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - duckQuack: {instanceID: 0}
+  - audioSourceSE: {instanceID: 0}
+  - audioSourceBGM: {instanceID: 0}
+  - birdData: {fileID: 11400000, guid: 92068147cc51f044cbf7ffd05f2b5ba2, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
