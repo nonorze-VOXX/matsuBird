@@ -13,7 +13,8 @@ namespace InGame
         Prepare,
         Flying,
         NextMap,
-        GameOver
+        GameOver,
+        Win
     }
 
     internal enum groundState
@@ -21,7 +22,8 @@ namespace InGame
         Normal,
         Fire,
         Food,
-        FireWall
+        FireWall,
+        NEST
     }
 
     public class InGameManager : MonoBehaviour
@@ -30,6 +32,7 @@ namespace InGame
         public GameConfig gameConfig;
         public Rigidbody2D birdRigidbody2D;
         public GameObject firePrefab;
+        public GameObject nestPrefab;
         public List<Fire> fires = new();
         public GameObject fireWallPrefab;
         public GameObject foodPrefab;
@@ -41,13 +44,19 @@ namespace InGame
         public GameObject GameOverPanel;
         public GameObject GameWinPanel;
         public BirdData birdData;
+
+        public BirdPictureObject birdPictureObject;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
+        private readonly List<GameObject> nests = new();
         private float fireTime;
         private GameFlowState gameFlowState;
+
+        private int gameoverCounter;
         private bool isPlaceWall;
         private bool isPlaceWallLv2;
+        private int level;
 
 
         private Touch oldTouch;
@@ -58,28 +67,18 @@ namespace InGame
 
         private void Awake()
         {
+            level = 0;
             createWall = GameObject.Find("CreateWall");
             StartButton = GameObject.Find("StartButton");
-            //GameOverPanel = GameObject.Find("GameOverPanel");
             GameOverPanel.SetActive(false);
             GameWinPanel.SetActive(false);
             if (GameOverPanel == null) Debug.LogError("not found game opver");
             mainCamera = Camera.main;
-            Debug.Log(birdPrefab);
-            Debug.Log(transform);
-            var birdGO = Instantiate(birdPrefab, transform);
-            birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
             gameConfig.mapSize.x = mainCamera.orthographicSize * mainCamera.aspect;
-            gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x;
-            birdGO.transform.position = gameConfig.birdEnterPosition;
-            scriptBird = birdGO.GetComponent<Bird>();
-            scriptBird.SetInitSpeed(gameConfig.birdSpeed);
-            scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
-            scriptBird.Stop();
-            scriptBird.SetHp(gameConfig.initHp);
-            scriptBird.AddFoodListener(FoodDisappear);
-            scriptBird.AddGameOverListener(GameOver);
-            scriptBird.gameConfig = gameConfig;
+            gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x * 0.9F;
+
+            NewBird();
+
             newMap();
             gameFlowState = GameFlowState.Prepare;
             transform.position = Vector2.zero;
@@ -88,9 +87,9 @@ namespace InGame
             SwitchState(GameFlowState.Prepare);
             GenerateNextMap(mapState);
 
-            if (birdData.teamBird.Count != 0 && birdData.teamBird[0] != null) Debug.Log(birdData.teamBird[0].name);
+            gameoverCounter = 0;
+            SetBirdSprite(0);
         }
-
 
         private void Update()
         {
@@ -119,7 +118,6 @@ namespace InGame
                     if (!isPlaceWallLv2) return;
                     if (!oldTouch.position.Equals(new Vector2(-1, -1)))
                     {
-                        Debug.Log(oldTouch.position);
                         Vector3 worldPosition;
                         if (oldTouch.position != new Vector2(-1, -1))
                             worldPosition = Camera.main.ScreenToWorldPoint(oldTouch.position);
@@ -185,9 +183,44 @@ namespace InGame
                     break;
                 case GameFlowState.GameOver:
                     break;
+                case GameFlowState.Win:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void NewBird()
+        {
+            var birdGO = Instantiate(birdPrefab, transform);
+            birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
+            birdGO.transform.position = gameConfig.birdEnterPosition;
+            scriptBird = birdGO.GetComponent<Bird>();
+            scriptBird.SetInitSpeed(gameConfig.birdSpeed);
+            scriptBird.SetAboveFireSpeed(gameConfig.aboveFireSpeed);
+            scriptBird.Stop();
+            scriptBird.SetHp(gameConfig.initHp);
+            scriptBird.AddFoodListener(FoodDisappear);
+            scriptBird.AddGameOverListener(GameOver);
+            scriptBird.AddGameWinListener(GameWin);
+            scriptBird.gameConfig = gameConfig;
+        }
+
+        private void SetBirdSprite(int index)
+        {
+            if (birdData.teamBird.Count > index && birdData.teamBird[index] != null)
+                for (var i = 0; i < Enum.GetNames(typeof(BirdType)).Length; i++)
+                    if (birdData.teamBird[index].name.Contains((i + 1).ToString()))
+                    {
+                        Debug.Log("choose " + i + " bird");
+                        gameConfig.birdType = (BirdType)i;
+                    }
+        }
+
+        private void GameWin()
+        {
+            Debug.Log("wqin");
+            SwitchState(GameFlowState.Win);
         }
 
         private void GameOver()
@@ -247,6 +280,13 @@ namespace InGame
                 food.gameObject.SetActive(false);
                 foods.Add(food);
 
+                var random = Random.Range(0, birdPictureObject.birdPicture.Count);
+                var nest = Instantiate(nestPrefab, transform);
+                nest.transform.position = new Vector3(i, gameConfig.groundHeight, 0);
+                nest.GetComponent<SpriteRenderer>().sprite = birdPictureObject.birdPicture[random];
+                nest.gameObject.SetActive(false);
+                nests.Add(nest);
+
                 mapState.Add(groundState.Normal);
                 UpdateMapState();
             }
@@ -268,6 +308,7 @@ namespace InGame
                 fires[i].gameObject.SetActive(mapState[i] == groundState.Fire);
                 fireWalls[i].gameObject.SetActive(mapState[i] == groundState.FireWall);
                 foods[i].gameObject.SetActive(mapState[i] == groundState.Food);
+                nests[i].gameObject.SetActive(mapState[i] == groundState.NEST);
             }
         }
 
@@ -279,9 +320,11 @@ namespace InGame
 
         private void SwitchState(GameFlowState state)
         {
+            gameFlowState = state;
             switch (state)
             {
                 case GameFlowState.Prepare:
+                    level += 1;
                     createWall.GameObject().SetActive(true);
                     StartButton.GameObject().SetActive(true);
                     mainCamera.transform.position = new Vector3(0, 0, -10);
@@ -290,7 +333,16 @@ namespace InGame
                     scriptBird.transform.position =
                         new Vector2(gameConfig.birdEnterPosition.x,
                             scriptBird.transform.position.y);
-                    GenerateNextMap(mapState);
+                    if (level <= 10)
+                        GenerateNextMap(mapState);
+                    else
+                        for (var i = 0; i < mapState.Count; i++)
+                            if (i < mapState.Count / 2)
+                                mapState[i] = mapState[i + mapState.Count / 2];
+                            else
+                                mapState[i] = groundState.NEST;
+                    UpdateMapState();
+
                     break;
                 case GameFlowState.Flying:
                     createWall.GameObject().SetActive(false);
@@ -306,18 +358,38 @@ namespace InGame
                     switchTimer = 0;
                     break;
                 case GameFlowState.GameOver:
+                {
+                    if (gameoverCounter < 3)
+                    {
+                        Debug.Log("gameover");
+                        gameoverCounter++;
+                        NewBird();
+                        SetBirdSprite(gameoverCounter);
+                        SwitchState(GameFlowState.Prepare);
+                    }
+                    else
+                    {
+                        createWall.GameObject().SetActive(false);
+                        StartButton.GameObject().SetActive(false);
+                        var sprite = scriptBird.GetSprite();
+                        GameOverPanel.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
+                        GameOverPanel.SetActive(true);
+                    }
+
+                    break;
+                }
+                case GameFlowState.Win:
+                {
                     createWall.GameObject().SetActive(false);
                     StartButton.GameObject().SetActive(false);
                     var sprite = scriptBird.GetSprite();
-                    GameOverPanel.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
-                    GameOverPanel.SetActive(true);
-                    //ShowBirdComment();
+                    GameWinPanel.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
+                    GameWinPanel.SetActive(true);
                     break;
+                }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
-
-            gameFlowState = state;
         }
 
         public void GoToMenu()

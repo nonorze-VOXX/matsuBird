@@ -30,7 +30,7 @@ public class OutGameManager : Singleton<OutGameManager>
         DontDestroyOnLoad(audioSourceBGM);
         SceneManager.sceneLoaded += OnSceneLoad;
         audioSourceBGM.loop = true;
-        audioSourceSE.volume = 0.3f;
+        audioSourceSE.volume = 0.5f;
         birdData.teamBird = new List<Sprite>
         {
             null,
@@ -67,7 +67,7 @@ public class OutGameManager : Singleton<OutGameManager>
                 break;
             case "InGame":
                 // :TODO
-                _fsm = new TeamPage();
+                _fsm = null;
                 break;
             case "Team":
                 _fsm = new TeamPage();

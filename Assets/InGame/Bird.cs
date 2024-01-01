@@ -9,7 +9,9 @@ namespace InGame
         Fly,
         Land,
         Stop,
-        Die
+        Die,
+        Win,
+        Drop
     }
 
     public class Bird : MonoBehaviour
@@ -20,6 +22,7 @@ namespace InGame
         private Vector2 aboveFireSpeed;
         private Collider2D collider2D;
         private UnityAction gameover;
+        private UnityAction gameWin;
         private float hp;
         private Vector2 initSpeed;
 
@@ -59,6 +62,7 @@ namespace InGame
                     if (hp <= 0) SetState(BirdState.Die);
                     break;
                 case BirdState.Land:
+                {
                     var pos = transform.position;
                     timer += Time.deltaTime;
                     pos.y = +Mathf.Lerp(gameConfig.groundHeight + collider2D.bounds.extents.y,
@@ -66,8 +70,17 @@ namespace InGame
                         timer / gameConfig.flyToSkyTime);
                     transform.position = pos;
                     if (timer >= gameConfig.flyToSkyTime) SetState(BirdState.Fly);
+                }
+                    break;
+                case BirdState.Win:
                     break;
                 case BirdState.Die:
+                    break;
+                case BirdState.Drop:
+                {
+                    timer += Time.deltaTime;
+                    if (timer >= gameConfig.DropTime) Destroy(gameObject);
+                }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -78,11 +91,26 @@ namespace InGame
         {
             if (other.transform.CompareTag("ground") && state != BirdState.Die)
                 SetState(BirdState.Land);
+            if (other.transform.CompareTag("ground") && state == BirdState.Die)
+                SetState(BirdState.Drop);
             if (other.transform.CompareTag("food") && state != BirdState.Die)
             {
-                hp += gameConfig.foodHp;
+                hp = Mathf.Min(hp + gameConfig.foodHp, gameConfig.initHp);
                 getFood.Invoke(other.gameObject);
+                Fly();
             }
+
+            if (other.transform.CompareTag("mapBird") && state != BirdState.Die) SetState(BirdState.Win);
+        }
+
+        public void AddGameWinListener(UnityAction call)
+        {
+            gameWin += call;
+        }
+
+        public void GameWin()
+        {
+            gameWin.Invoke();
         }
 
         public void AddGameOverListener(UnityAction call)
@@ -92,13 +120,13 @@ namespace InGame
 
         public void GameOver()
         {
+            Debug.Log(transform.name + "bird invole gameover");
             gameover.Invoke();
         }
 
         private void UpdateBirdSprite()
         {
             var birdPicture = (int)gameConfig.birdType * 2 + (int)gameConfig.birdPictureState;
-            Debug.Log(birdPicture);
             spriteRenderer.sprite = birdPictureObject.birdPicture[birdPicture];
         }
 
@@ -134,6 +162,14 @@ namespace InGame
                 case BirdState.Die:
                     rigidbody2D.velocity = Vector2.down;
                     GameOver();
+                    break;
+                case BirdState.Win:
+                    rigidbody2D.velocity = Vector2.down;
+                    GameWin();
+                    break;
+                case BirdState.Drop:
+                    timer = 0;
+                    rigidbody2D.velocity = new Vector2(-10, 10);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -180,6 +216,11 @@ namespace InGame
         public Sprite GetSprite()
         {
             return spriteRenderer.sprite;
+        }
+
+        public void Drop()
+        {
+            SetState(BirdState.Drop);
         }
     }
 }

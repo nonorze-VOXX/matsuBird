@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - ground
   - food
+  - mapBird
   layers:
   - Default
   - TransparentFX
