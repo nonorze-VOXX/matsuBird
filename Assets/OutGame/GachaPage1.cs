@@ -10,6 +10,7 @@ public class GachaPage1 : Scene_manerger
 {
     private GachaView _gachaView;
     private bool IsBirdComed = false;
+    private int birdType = 1;
 
     private List<string> birdPath = new List<string>()
     {
@@ -28,6 +29,11 @@ public class GachaPage1 : Scene_manerger
 
     public override void Update()
     {
+        if (!_gachaView.birdCome.isPlaying && IsBirdComed)
+        {
+            OutGameManager.instance.SetCurrentDetail(birdType);
+            OutGameManager.instance.GotoScene("BirdDetail");
+        }
         
     }
     
@@ -51,11 +57,11 @@ public class GachaPage1 : Scene_manerger
 
     TeamBird RandomBird()
     {
-        int randomNumber = Random.Range(1, 5);
-        string path = birdPath[randomNumber-1];
+        birdType = Random.Range(1, 5);
+        string path = birdPath[birdType-1];
         _gachaView.bird.sprite = Resources.Load<Sprite>("Image/bird/" + path + "_f");
         
-        return new TeamBird(path,randomNumber);
+        return new TeamBird(path,birdType);
     }
     
     void PlayKasu()
