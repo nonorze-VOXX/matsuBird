@@ -39,7 +39,6 @@ public class OutGameManager : Singleton<OutGameManager>
         };
         birdData.birdList = new List<TeamBird>
         {
-            new("b", 0),
             new("b1", 1),
             new("b2", 2),
             new("b3", 3),

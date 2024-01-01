@@ -23,6 +23,8 @@ namespace InGame
         private Collider2D collider2D;
         private UnityAction gameover;
         private UnityAction gameWin;
+
+        private bool higher;
         private float hp;
         private Vector2 initSpeed;
 
@@ -89,18 +91,26 @@ namespace InGame
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.transform.CompareTag("ground") && state != BirdState.Die)
-                SetState(BirdState.Land);
-            if (other.transform.CompareTag("ground") && state == BirdState.Die)
+            if (state == BirdState.Die)
+            {
                 SetState(BirdState.Drop);
-            if (other.transform.CompareTag("food") && state != BirdState.Die)
+            }
+            else if (other.transform.CompareTag("ground") && state != BirdState.Die)
+            {
+                higher = false;
+                SetState(BirdState.Land);
+            }
+            else if (other.transform.CompareTag("food") && state != BirdState.Die)
             {
                 hp = Mathf.Min(hp + gameConfig.foodHp, gameConfig.initHp);
                 getFood.Invoke(other.gameObject);
-                Fly();
+                higher = true;
+                SetState(BirdState.Land);
             }
-
-            if (other.transform.CompareTag("mapBird") && state != BirdState.Die) SetState(BirdState.Win);
+            else if (other.transform.CompareTag("mapBird") && state != BirdState.Die)
+            {
+                SetState(BirdState.Win);
+            }
         }
 
         public void AddGameWinListener(UnityAction call)
@@ -151,7 +161,7 @@ namespace InGame
                     break;
                 case BirdState.Land:
                     rigidbody2D.velocity = Vector2.zero;
-                    hp -= gameConfig.flyToSkyHp;
+                    if (!higher) hp -= gameConfig.flyToSkyHp;
                     timer = 0;
                     gameConfig.birdPictureState = BirdPictureState.stand;
                     UpdateBirdSprite();
@@ -169,6 +179,7 @@ namespace InGame
                     break;
                 case BirdState.Drop:
                     timer = 0;
+                    collider2D.isTrigger = true;
                     rigidbody2D.velocity = new Vector2(-10, 10);
                     break;
                 default:
