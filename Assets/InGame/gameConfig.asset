@@ -28,4 +28,4 @@ MonoBehaviour:
   foodHp: 60
   birdPictureState: 1
   birdType: 3
-  foodNumber: 5
+  foodNumber: 0

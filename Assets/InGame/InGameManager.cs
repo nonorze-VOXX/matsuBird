@@ -10,7 +10,8 @@ namespace InGame
     {
         Prepare,
         Flying,
-        NextMap
+        NextMap,
+        GameOver
     }
 
     internal enum groundState
@@ -36,6 +37,7 @@ namespace InGame
         public GameObject hpBar;
         public GameObject createWall;
         public GameObject StartButton;
+        public GameObject GameOverPanel;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -50,6 +52,9 @@ namespace InGame
         {
             createWall = GameObject.Find("CreateWall");
             StartButton = GameObject.Find("StartButton");
+            GameOverPanel = GameObject.Find("GameOverPanel");
+            GameOverPanel.SetActive(false);
+            if (GameOverPanel == null) Debug.LogError("not found game opver");
             mainCamera = Camera.main;
             Debug.Log(birdPrefab);
             Debug.Log(transform);
@@ -63,6 +68,7 @@ namespace InGame
             scriptBird.Stop();
             scriptBird.SetHp(gameConfig.initHp);
             scriptBird.AddFoodListener(FoodDisappear);
+            scriptBird.AddGameOverListener(GameOver);
             scriptBird.gameConfig = gameConfig;
             newMap();
             gameFlowState = GameFlowState.Prepare;
@@ -90,11 +96,15 @@ namespace InGame
 
                     if (fireWallHint.activeSelf)
                     {
-                        var worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        Vector3 worldPosition;
+                        if (Input.touches.Length != 0)
+                            worldPosition = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+                        else
+                            worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         var hintpos = new Vector2(Mathf.Round(worldPosition.x), gameConfig.groundHeight);
                         hintpos.x = Mathf.Max(hintpos.x, gameConfig.fireRangeMin);
                         fireWallHint.transform.position = hintpos;
-                        if (Input.GetKeyDown(KeyCode.Mouse0))
+                        if (Input.GetKeyDown(KeyCode.Mouse0) || Input.touches.Length != 0)
                         {
                             var index = 0;
                             foreach (var fireWall in fireWalls)
@@ -153,9 +163,16 @@ namespace InGame
                     if (switchTimer > gameConfig.switchTime)
                         SwitchState(GameFlowState.Prepare);
                     break;
+                case GameFlowState.GameOver:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void GameOver()
+        {
+            SwitchState(GameFlowState.GameOver);
         }
 
         public void Fly()
@@ -256,8 +273,6 @@ namespace InGame
                     GenerateNextMap(mapState);
                     break;
                 case GameFlowState.Flying:
-
-
                     createWall.GameObject().SetActive(false);
                     StartButton.GameObject().SetActive(false);
                     fireWallHint.SetActive(false);
@@ -269,6 +284,12 @@ namespace InGame
                     scriptBird.Stop();
                     pastPosition = transform.position;
                     switchTimer = 0;
+                    break;
+                case GameFlowState.GameOver:
+                    createWall.GameObject().SetActive(false);
+                    StartButton.GameObject().SetActive(false);
+                    GameOverPanel.SetActive(true);
+                    //ShowBirdComment();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
