@@ -97,7 +97,10 @@ namespace InGame
                     if (Input.GetKeyDown(KeyCode.Space))
                         Fly();
                     if (Input.GetKeyDown(KeyCode.Q))
+                    {
                         ActiveFireHint();
+                        return;
+                    }
 
                     if (fireWallHint.activeSelf)
                     {
