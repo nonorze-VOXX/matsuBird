@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace InGame
@@ -38,6 +40,7 @@ namespace InGame
         public GameObject createWall;
         public GameObject StartButton;
         public GameObject GameOverPanel;
+        public GameObject GameWinPanel;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -52,14 +55,16 @@ namespace InGame
         {
             createWall = GameObject.Find("CreateWall");
             StartButton = GameObject.Find("StartButton");
-            GameOverPanel = GameObject.Find("GameOverPanel");
+            //GameOverPanel = GameObject.Find("GameOverPanel");
             GameOverPanel.SetActive(false);
+            GameWinPanel.SetActive(false);
             if (GameOverPanel == null) Debug.LogError("not found game opver");
             mainCamera = Camera.main;
             Debug.Log(birdPrefab);
             Debug.Log(transform);
             var birdGO = Instantiate(birdPrefab, transform);
             birdRigidbody2D = birdGO.GetComponent<Rigidbody2D>();
+            gameConfig.mapSize.x = mainCamera.orthographicSize * mainCamera.aspect;
             gameConfig.birdEnterPosition.x = -gameConfig.mapSize.x;
             birdGO.transform.position = gameConfig.birdEnterPosition;
             scriptBird = birdGO.GetComponent<Bird>();
@@ -288,6 +293,8 @@ namespace InGame
                 case GameFlowState.GameOver:
                     createWall.GameObject().SetActive(false);
                     StartButton.GameObject().SetActive(false);
+                    var sprite = scriptBird.GetSprite();
+                    GameOverPanel.transform.GetChild(0).GetComponent<Image>().sprite = sprite;
                     GameOverPanel.SetActive(true);
                     //ShowBirdComment();
                     break;
@@ -296,6 +303,11 @@ namespace InGame
             }
 
             gameFlowState = state;
+        }
+
+        public void GoToMenu()
+        {
+            SceneManager.LoadScene("Main");
         }
     }
 }

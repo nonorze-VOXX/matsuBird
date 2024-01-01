@@ -176,5 +176,10 @@ namespace InGame
         {
             return hp;
         }
+
+        public Sprite GetSprite()
+        {
+            return spriteRenderer.sprite;
+        }
     }
 }
