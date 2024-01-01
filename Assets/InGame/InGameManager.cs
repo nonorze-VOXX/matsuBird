@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace InGame
@@ -33,6 +34,8 @@ namespace InGame
 
         public Camera mainCamera;
         public GameObject hpBar;
+        public Button createWall;
+        public Button StartButton;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -41,6 +44,7 @@ namespace InGame
         private Vector2 pastPosition = new(0, 0);
         private Bird scriptBird;
         private float switchTimer;
+
 
         private void Awake()
         {
@@ -66,6 +70,8 @@ namespace InGame
             fireWallHint = Instantiate(fireWallPrefab, transform);
             SwitchState(GameFlowState.Prepare);
             GenerateNextMap(mapState);
+            createWall = GameObject.Find("CreateWall").GetComponent<Button>();
+            StartButton = GameObject.Find("StartButton").GetComponent<Button>();
         }
 
 
@@ -77,9 +83,9 @@ namespace InGame
                 case GameFlowState.Prepare:
                     // SwtchState(GameFlowState.Flying);
                     if (Input.GetKeyDown(KeyCode.Space))
-                        SwitchState(GameFlowState.Flying);
+                        Fly();
                     if (Input.GetKeyDown(KeyCode.Q))
-                        fireWallHint.SetActive(true);
+                        ActiveFireHint();
 
                     if (fireWallHint.activeSelf)
                     {
@@ -149,6 +155,16 @@ namespace InGame
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void Fly()
+        {
+            SwitchState(GameFlowState.Flying);
+        }
+
+        public void ActiveFireHint()
+        {
+            fireWallHint.SetActive(true);
         }
 
         private void GenerateNextMap(List<groundState> mapState)
