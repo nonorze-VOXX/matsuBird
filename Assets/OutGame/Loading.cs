@@ -12,7 +12,6 @@ public class Loading : MonoBehaviour
     private int range = 770;
     public Text run_number;
     public GameObject bird;
-    public AudioClip mainBGM;
     public AudioClip announce;
 
    // Start is called before the first frame update
@@ -31,8 +30,6 @@ public class Loading : MonoBehaviour
         run_number.text = (int)((bird.transform.GetComponent<RectTransform>().localPosition.x + 440) / range * 100) + " %";
         if (run_number.text == "99 %" || run_number.text == "100 %")
         {
-            OutGameManager.instance.audioSourceBGM.clip = mainBGM;
-            OutGameManager.instance.audioSourceBGM.Play();
             OutGameManager.instance.GotoScene("Main");
         }
     }

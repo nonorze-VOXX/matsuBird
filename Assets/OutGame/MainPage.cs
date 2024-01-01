@@ -20,6 +20,16 @@ public class MainPage : Scene_manerger
         _mainView.bird.onClick.AddListener(GoToInGame);
         _mainView.team.onClick.AddListener(delegate { SwitchPage("Team"); });
         _mainView.cacha.onClick.AddListener(delegate { SwitchPage("GaCha"); });
+
+        
+        if (OutGameManager.instance.audioSourceBGM.clip == null || !OutGameManager.instance.audioSourceBGM.isPlaying)
+        {
+            OutGameManager.instance.audioSourceBGM.clip = _mainView.bgm;
+            OutGameManager.instance.audioSourceBGM.Play();
+            Debug.Log(_mainView.bgm.name);
+            Debug.Log(OutGameManager.instance.audioSourceBGM.name);
+            Debug.Log(OutGameManager.instance.audioSourceBGM.clip.name);
+        }
     }
 
     // Update is called once per frame
@@ -37,6 +47,7 @@ public class MainPage : Scene_manerger
     {
         if (focusl)
         {
+            OutGameManager.instance.audioSourceBGM.Stop();
             SwitchPage("InGame");
         }
         else
