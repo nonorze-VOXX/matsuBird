@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using InGame;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class OutGameManager : Singleton<OutGameManager>
@@ -11,30 +9,19 @@ public class OutGameManager : Singleton<OutGameManager>
     public AudioClip duckQuack;
     public AudioSource audioSourceSE;
     public AudioSource audioSourceBGM;
+
+    public BirdData birdData;
+
     private Scene_manerger _fsm;
+
+
     private int currentDetailType = 1;
 
-    private List<Sprite> teamBird = new List<Sprite>()
+    private void Update()
     {
-        null,
-        null,
-        null
-    };
+        if (_fsm != null) _fsm.Update();
+    }
 
-    private List<TeamBird> birdList = new List<TeamBird>()
-    {
-        new TeamBird("b", 0),
-        new TeamBird("b1", 1),
-        new TeamBird("b2", 2),
-        new TeamBird("b3", 3),
-        new TeamBird("b3", 3),
-        new TeamBird("b3", 3),
-        new TeamBird("b3", 3),
-        new TeamBird("b3", 3),
-        new TeamBird("b3", 3),
-        new TeamBird("b4", 4),
-    };
-    
     protected override void _Awake()
     {
         Debug.Log("GM Awake");
@@ -43,22 +30,33 @@ public class OutGameManager : Singleton<OutGameManager>
         DontDestroyOnLoad(audioSourceBGM);
         SceneManager.sceneLoaded += OnSceneLoad;
         audioSourceBGM.loop = true;
-        audioSourceSE.volume = 0.3f;
-    }
-
-    private void Update()
-    {
-        if (_fsm != null)
+        audioSourceSE.volume = 0.5f;
+        birdData.teamBird = new List<Sprite>
         {
-            _fsm.Update();
-        }
+            null,
+            null,
+            null
+        };
+        birdData.birdList = new List<TeamBird>
+        {
+            new("b", 0),
+            new("b1", 1),
+            new("b2", 2),
+            new("b3", 3),
+            new("b3", 3),
+            new("b3", 3),
+            new("b3", 3),
+            new("b3", 3),
+            new("b3", 3),
+            new("b4", 4)
+        };
     }
 
     public void StartGame()
     {
         Debug.Log("press space");
     }
-    
+
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
         Debug.Log(scene.name);
@@ -69,7 +67,7 @@ public class OutGameManager : Singleton<OutGameManager>
                 break;
             case "InGame":
                 // :TODO
-                _fsm = new TeamPage();
+                _fsm = null;
                 break;
             case "Team":
                 _fsm = new TeamPage();
@@ -80,8 +78,6 @@ public class OutGameManager : Singleton<OutGameManager>
             case "BirdDetail":
                 _fsm = new DetailPage();
                 break;
-            default:
-                break;
         }
 
         if (_fsm != null)
@@ -90,7 +86,7 @@ public class OutGameManager : Singleton<OutGameManager>
             _fsm.Start();
         }
     }
-    
+
     public void GotoScene(string name)
     {
         SceneManager.LoadScene(name);
@@ -98,30 +94,29 @@ public class OutGameManager : Singleton<OutGameManager>
 
     public List<TeamBird> GetBirdList()
     {
-        return birdList;
+        return birdData.birdList;
     }
+
     public void AddBirdList(TeamBird teamBird)
     {
-        birdList.Add(teamBird);
+        birdData.birdList.Add(teamBird);
     }
+
     public List<Sprite> GetTeamBird()
     {
-        return teamBird;
+        return birdData.teamBird;
     }
-    
+
     public void SetTeamBirdByID(int index, Sprite sprite)
     {
-        teamBird[index] = sprite;
+        birdData.teamBird[index] = sprite;
     }
 
 
     private void DuckQuack()
     {
-        Button[] buttons = FindObjectsOfType<Button>();
-        foreach (var button in buttons)
-        {
-            button.onClick.AddListener(AddDuckToButton);
-        }
+        var buttons = FindObjectsOfType<Button>();
+        foreach (var button in buttons) button.onClick.AddListener(AddDuckToButton);
     }
 
     private void AddDuckToButton()
@@ -138,5 +133,4 @@ public class OutGameManager : Singleton<OutGameManager>
     {
         return currentDetailType;
     }
-    
 }
