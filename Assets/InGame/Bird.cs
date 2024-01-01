@@ -19,6 +19,7 @@ namespace InGame
         private int aboveFire;
         private Vector2 aboveFireSpeed;
         private Collider2D collider2D;
+        private UnityAction gameover;
         private float hp;
         private Vector2 initSpeed;
 
@@ -84,6 +85,16 @@ namespace InGame
             }
         }
 
+        public void AddGameOverListener(UnityAction call)
+        {
+            gameover += call;
+        }
+
+        public void GameOver()
+        {
+            gameover.Invoke();
+        }
+
         private void UpdateBirdSprite()
         {
             var birdPicture = (int)gameConfig.birdType * 2 + (int)gameConfig.birdPictureState;
@@ -122,6 +133,7 @@ namespace InGame
                     break;
                 case BirdState.Die:
                     rigidbody2D.velocity = Vector2.down;
+                    GameOver();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -163,6 +175,11 @@ namespace InGame
         public float GetHp()
         {
             return hp;
+        }
+
+        public Sprite GetSprite()
+        {
+            return spriteRenderer.sprite;
         }
     }
 }
