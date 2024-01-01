@@ -16,6 +16,7 @@ public class DetailPage : Scene_manerger
             OutGameManager.instance.GotoScene("Team");
         });
         
+        currentType = OutGameManager.instance.GetCurrentDetail();
         _detailView.SetInfo(currentType);
     }
 

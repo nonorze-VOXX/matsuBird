@@ -10,6 +10,7 @@ public class TeamPage : Scene_manerger
     // Start is called before the first frame update
     private TeamView _teamView;
     private int currentSelectTeamMember = 1;
+    private List<Sprite> _teamBird = new List<Sprite>();
 
     public override void Start()
     {
@@ -20,11 +21,8 @@ public class TeamPage : Scene_manerger
         _teamView.team_2.GetComponent<Button>().onClick.AddListener(delegate { ChangeTeam(_teamView.team_2, 2); });
         _teamView.team_3.GetComponent<Button>().onClick.AddListener(delegate { ChangeTeam(_teamView.team_3, 3); });
 
-        List<Sprite> _teamBird = OutGameManager.instance.GetTeamBird();
         
-        _teamView.team_1.transform.Find("Image").gameObject.transform.Find("bird").gameObject.GetComponent<Image>().sprite = _teamBird[0];
-        _teamView.team_2.transform.Find("Image").gameObject.transform.Find("bird").gameObject.GetComponent<Image>().sprite = _teamBird[1];
-        _teamView.team_3.transform.Find("Image").gameObject.transform.Find("bird").gameObject.GetComponent<Image>().sprite = _teamBird[2];
+        _teamBird = OutGameManager.instance.GetTeamBird();
 
         _teamView._leftB.onClick.AddListener(PagoSubOne);
         _teamView._rightB.onClick.AddListener(PagoAddOne);
@@ -35,18 +33,16 @@ public class TeamPage : Scene_manerger
     // Update is called once per frame
     public override void Update()
     {
-        if (_teamView.IsCreateOver())
+        _teamView.team_1.transform.Find("Image").gameObject.transform.Find("bird").gameObject.GetComponent<Image>().sprite = _teamBird[0];
+        _teamView.team_2.transform.Find("Image").gameObject.transform.Find("bird").gameObject.GetComponent<Image>().sprite = _teamBird[1];
+        _teamView.team_3.transform.Find("Image").gameObject.transform.Find("bird").gameObject.GetComponent<Image>().sprite = _teamBird[2];
+        
+        foreach (var birdButton in _teamView.GetBirdList())
         {
-            foreach (var birdButton in _teamView.GetBirdList())
+            if (birdButton != null)
             {
-                Button button = birdButton.transform.Find("Button").GetComponent<Button>();
-                TeamBird birdInfo = birdButton.GetComponent<TeamBird>();
-                Debug.Log(birdInfo.GetPath());
-                Debug.Log(birdInfo.GetBirdType());
-                button.onClick.AddListener(delegate { BirdButtonChangeTeam(birdInfo.GetBirdType()); });
+                birdButton.transform.Find("Button").GetComponent<ButtonClickLongShort>().SetCurrentTeamSelect(currentSelectTeamMember);
             }
-            
-            _teamView.CloseCreateOver();
         }
 
         if (_teamView.GetCurrentIndex() == 0)
@@ -82,31 +78,6 @@ public class TeamPage : Scene_manerger
         target.GetComponent<Outline>().enabled = true;
 
         currentSelectTeamMember = index;
-    }
-
-    private void BirdButtonChangeTeam(int type)
-    {
-        Debug.Log(type);
-        Sprite sprite = _teamView.GetBiSprites()[type];
-        
-        if (currentSelectTeamMember == 1)
-        {
-            GameObject teamButton = _teamView.team_1.transform.Find("Image").gameObject.transform.Find("bird").gameObject;
-            teamButton.GetComponent<Image>().sprite = sprite;
-            OutGameManager.instance.SetTeamBirdByID(0,sprite);
-        }
-        else if (currentSelectTeamMember == 2)
-        {
-            GameObject teamButton = _teamView.team_2.transform.Find("Image").gameObject.transform.Find("bird").gameObject;
-            teamButton.GetComponent<Image>().sprite = sprite;
-            OutGameManager.instance.SetTeamBirdByID(1,sprite);
-        }
-        else if (currentSelectTeamMember == 3)
-        {
-            GameObject teamButton = _teamView.team_3.transform.Find("Image").gameObject.transform.Find("bird").gameObject;
-            teamButton.GetComponent<Image>().sprite = sprite;
-            OutGameManager.instance.SetTeamBirdByID(2,sprite);
-        }
     }
 
     void PagoAddOne()

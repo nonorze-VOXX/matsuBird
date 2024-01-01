@@ -270,7 +270,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b9defe90d4617c14e988ef0ce9bc4ef7, type: 3}
+  m_Sprite: {fileID: 541048772, guid: b9defe90d4617c14e988ef0ce9bc4ef7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1956,6 +1956,10 @@ PrefabInstance:
     - target: {fileID: 4659859867206406377, guid: c068cacbde3f2ba4aad51dd2231a795b, type: 3}
       propertyPath: m_Name
       value: LoadingScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659859867206406377, guid: c068cacbde3f2ba4aad51dd2231a795b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4659859867206406378, guid: c068cacbde3f2ba4aad51dd2231a795b, type: 3}
       propertyPath: m_Pivot.x

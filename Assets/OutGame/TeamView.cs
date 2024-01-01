@@ -14,24 +14,14 @@ public class TeamView : MonoBehaviour
     public GameObject bird, onePage;
     private int onePageBirdNumber = 8;
     private List<GameObject> _birdButtonArray = new List<GameObject>();
-    private bool createOver = false;
     private PageView _scrool_function;
     private int _birdPageNumber;
-    private List<Sprite> _bigBirdSprite = new List<Sprite>();
 
     private void Start()
     {
         _scrool_function = GameObject.FindObjectOfType<PageView>();
         _left = transform.Find("button/left").GetComponent<Image>();
         _right = transform.Find("button/right").GetComponent<Image>();
-        _bigBirdSprite = new List<Sprite>()
-        {
-            Resources.Load("Image/bird/b", typeof(Sprite)) as Sprite,
-            Resources.Load("Image/bird/big_b1", typeof(Sprite)) as Sprite,
-            Resources.Load("Image/bird/big_b2", typeof(Sprite)) as Sprite,
-            Resources.Load("Image/bird/b3", typeof(Sprite)) as Sprite,
-            Resources.Load("Image/bird/big_b4", typeof(Sprite)) as Sprite
-        };
     }
 
     public void CreateOnePage()
@@ -51,7 +41,6 @@ public class TeamView : MonoBehaviour
             CreateBird(onePageGameObject, i);
         }
 
-        createOver = true;
         Debug.Log("Create over");
     }
 
@@ -84,16 +73,6 @@ public class TeamView : MonoBehaviour
         return _birdButtonArray;
     }
 
-    public bool IsCreateOver()
-    {
-        return createOver;
-    }
-
-    public void CloseCreateOver()
-    {
-        createOver = false;
-    }
-
     public int GetCurrentIndex()
     {
         return _scrool_function.GetCurrentIndex();
@@ -117,10 +96,5 @@ public class TeamView : MonoBehaviour
     public void setRight(bool enable)
     {
         _right.enabled = enable;
-    }
-
-    public List<Sprite> GetBiSprites()
-    {
-        return _bigBirdSprite;
     }
 }

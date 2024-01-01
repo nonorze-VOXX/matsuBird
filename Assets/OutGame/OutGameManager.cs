@@ -12,6 +12,7 @@ public class OutGameManager : Singleton<OutGameManager>
     public AudioSource audioSourceSE;
     public AudioSource audioSourceBGM;
     private Scene_manerger _fsm;
+    private int currentDetailType = 1;
 
     private List<Sprite> teamBird = new List<Sprite>()
     {
@@ -120,6 +121,16 @@ public class OutGameManager : Singleton<OutGameManager>
     private void AddDuckToButton()
     {
         audioSourceSE.PlayOneShot(duckQuack);
+    }
+
+    public void SetCurrentDetail(int type)
+    {
+        currentDetailType = type;
+    }
+
+    public int GetCurrentDetail()
+    {
+        return currentDetailType;
     }
     
 }
