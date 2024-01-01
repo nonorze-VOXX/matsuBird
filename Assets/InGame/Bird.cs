@@ -179,6 +179,7 @@ namespace InGame
                     break;
                 case BirdState.Drop:
                     timer = 0;
+                    collider2D.isTrigger = true;
                     rigidbody2D.velocity = new Vector2(-10, 10);
                     break;
                 default:
