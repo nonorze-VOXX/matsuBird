@@ -13,8 +13,15 @@ public class DetailView : MonoBehaviour
 
     public TMP_Text name;
     public TMP_Text detail;
+    public AudioClip se;
     
     // Start is called before the first frame update
+    public void Start()
+    {
+        OutGameManager.instance.audioSourceSE.PlayOneShot(se);
+    }
+
+
     public void SetInfo(int currentType){
         if (currentType == 1)
         {
