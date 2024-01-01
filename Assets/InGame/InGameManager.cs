@@ -68,6 +68,7 @@ namespace InGame
             mainCamera.transform.position = new Vector3(0, 0, -10);
             for (var i = mapState.Count / 2; i < mapState.Count; i++) mapState[i] = groundState.Normal;
             fireWallHint = Instantiate(fireWallPrefab, transform);
+            fireWallHint.SetActive(false);
             SwitchState(GameFlowState.Prepare);
             GenerateNextMap(mapState);
             createWall = GameObject.Find("CreateWall").GetComponent<Button>();
@@ -175,10 +176,14 @@ namespace InGame
                 else
                     mapState[i] = groundState.Normal;
             var firenumber = Random.Range(fires.Count / 2 + 1, fires.Count);
-            var foodnumber = Random.Range((int)(fires.Count * (float)(3 / 4)) + 1, fires.Count);
-            foodnumber = foodnumber == firenumber ? foodnumber + 2 : foodnumber;
             mapState[firenumber] = groundState.Fire;
-            mapState[foodnumber] = groundState.Food;
+            for (var i = 0; i < gameConfig.foodNumber; i++)
+            {
+                var foodnumber = Random.Range((int)(fires.Count * (float)(3 / 4)) + 1, fires.Count);
+                foodnumber = foodnumber == firenumber ? foodnumber + 2 : foodnumber;
+                if (this.mapState[foodnumber] != groundState.Fire) mapState[foodnumber] = groundState.Food;
+            }
+
             UpdateMapState();
         }
 
