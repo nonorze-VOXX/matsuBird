@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace InGame
@@ -34,8 +34,8 @@ namespace InGame
 
         public Camera mainCamera;
         public GameObject hpBar;
-        public Button createWall;
-        public Button StartButton;
+        public GameObject createWall;
+        public GameObject StartButton;
         private readonly List<GameObject> fireWalls = new();
         private readonly List<GameObject> foods = new();
         private readonly List<groundState> mapState = new();
@@ -48,6 +48,8 @@ namespace InGame
 
         private void Awake()
         {
+            createWall = GameObject.Find("CreateWall");
+            StartButton = GameObject.Find("StartButton");
             mainCamera = Camera.main;
             Debug.Log(birdPrefab);
             Debug.Log(transform);
@@ -71,8 +73,6 @@ namespace InGame
             fireWallHint.SetActive(false);
             SwitchState(GameFlowState.Prepare);
             GenerateNextMap(mapState);
-            createWall = GameObject.Find("CreateWall").GetComponent<Button>();
-            StartButton = GameObject.Find("StartButton").GetComponent<Button>();
         }
 
 
@@ -245,6 +245,8 @@ namespace InGame
             switch (state)
             {
                 case GameFlowState.Prepare:
+                    createWall.GameObject().SetActive(true);
+                    StartButton.GameObject().SetActive(true);
                     mainCamera.transform.position = new Vector3(0, 0, -10);
                     // transform.position = Vector2.zero;
                     scriptBird.Stop();
@@ -255,6 +257,9 @@ namespace InGame
                     break;
                 case GameFlowState.Flying:
 
+
+                    createWall.GameObject().SetActive(false);
+                    StartButton.GameObject().SetActive(false);
                     fireWallHint.SetActive(false);
                     scriptBird.Fly();
                     fireTime = 0;
