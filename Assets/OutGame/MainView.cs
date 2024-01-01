@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,5 +23,12 @@ public class MainView : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnDestroy()
+    {
+        team.onClick.RemoveAllListeners();
+        cacha.onClick.RemoveAllListeners();
+        bird.onClick.RemoveAllListeners();
     }
 }

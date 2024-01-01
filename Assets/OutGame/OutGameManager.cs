@@ -61,6 +61,7 @@ public class OutGameManager : Singleton<OutGameManager>
     
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log(scene.name);
         switch (scene.name)
         {
             case "Main":
@@ -74,7 +75,7 @@ public class OutGameManager : Singleton<OutGameManager>
                 _fsm = new TeamPage();
                 break;
             case "GaCha":
-                _fsm = new GaChaPage();
+                _fsm = new GachaPage1();
                 break;
             case "BirdDetail":
                 _fsm = new DetailPage();
@@ -99,6 +100,10 @@ public class OutGameManager : Singleton<OutGameManager>
     {
         return birdList;
     }
+    public void AddBirdList(TeamBird teamBird)
+    {
+        birdList.Add(teamBird);
+    }
     public List<Sprite> GetTeamBird()
     {
         return teamBird;
@@ -108,6 +113,7 @@ public class OutGameManager : Singleton<OutGameManager>
     {
         teamBird[index] = sprite;
     }
+
 
     private void DuckQuack()
     {

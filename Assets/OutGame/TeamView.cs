@@ -8,7 +8,6 @@ using Object = UnityEngine.Object;
 public class TeamView : MonoBehaviour
 {
     public Button backButton;
-    private Image _left, _right;
     public Button _leftB, _rightB;
     public GameObject team_1, team_2, team_3;
     public GameObject bird, onePage;
@@ -20,8 +19,6 @@ public class TeamView : MonoBehaviour
     private void Start()
     {
         _scrool_function = GameObject.FindObjectOfType<PageView>();
-        _left = transform.Find("button/left").GetComponent<Image>();
-        _right = transform.Find("button/right").GetComponent<Image>();
     }
 
     public void CreateOnePage()
@@ -88,13 +85,23 @@ public class TeamView : MonoBehaviour
         return _birdPageNumber;
     }
 
-    public void setLeft(bool enable)
+    public void SetLeft(bool enable)
     {
-        _left.enabled = enable;
+        _leftB.gameObject.SetActive(enable);
     }
 
-    public void setRight(bool enable)
+    public void SetRight(bool enable)
     {
-        _right.enabled = enable;
+        _rightB.gameObject.SetActive(enable);
+    }
+
+    void OnDestroy()
+    {
+        backButton.onClick.RemoveAllListeners(); 
+        _leftB.onClick.RemoveAllListeners();
+        _rightB.onClick.RemoveAllListeners();
+        team_1.GetComponent<Button>().onClick.RemoveAllListeners();
+        team_2.GetComponent<Button>().onClick.RemoveAllListeners();
+        team_3.GetComponent<Button>().onClick.RemoveAllListeners();
     }
 }

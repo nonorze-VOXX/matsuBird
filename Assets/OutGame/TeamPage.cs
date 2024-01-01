@@ -47,20 +47,20 @@ public class TeamPage : Scene_manerger
 
         if (_teamView.GetCurrentIndex() == 0)
         {
-            _teamView.setLeft(false);
+            _teamView.SetLeft(false);
         }
         else
         {
-            _teamView.setLeft(true);
+            _teamView.SetLeft(true);
         }
         
         if (_teamView.GetBirdPageNumber()-1 == _teamView.GetCurrentIndex())
         {
-            _teamView.setRight(false);
+            _teamView.SetRight(false);
         }
         else
         {
-            _teamView.setRight(true);
+            _teamView.SetRight(true);
         }
     }
 
