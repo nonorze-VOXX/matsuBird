@@ -32,7 +32,6 @@ namespace InGame
         public GameObject firePrefab;
         public List<Fire> fires = new();
         public GameObject fireWallPrefab;
-        public GameObject fireWallHint;
         public GameObject foodPrefab;
 
         public Camera mainCamera;
@@ -46,6 +45,11 @@ namespace InGame
         private readonly List<groundState> mapState = new();
         private float fireTime;
         private GameFlowState gameFlowState;
+        private bool isPlaceWall;
+        private bool isPlaceWallLv2;
+
+
+        private Touch oldTouch;
         private Vector2 pastPosition = new(0, 0);
         private Bird scriptBird;
         private float switchTimer;
@@ -80,15 +84,25 @@ namespace InGame
             transform.position = Vector2.zero;
             mainCamera.transform.position = new Vector3(0, 0, -10);
             for (var i = mapState.Count / 2; i < mapState.Count; i++) mapState[i] = groundState.Normal;
-            fireWallHint = Instantiate(fireWallPrefab, transform);
-            fireWallHint.SetActive(false);
             SwitchState(GameFlowState.Prepare);
             GenerateNextMap(mapState);
         }
 
-
         private void Update()
         {
+            if (Input.touches.Length != 0)
+            {
+                oldTouch = Input.touches[0];
+            }
+            else
+            {
+                oldTouch = new Touch();
+                oldTouch.position = new Vector2(-1, -1);
+                if (isPlaceWall)
+                    isPlaceWallLv2 = true;
+            }
+
+
             UpdateHpBar();
             switch (gameFlowState)
             {
@@ -96,37 +110,31 @@ namespace InGame
                     // SwtchState(GameFlowState.Flying);
                     if (Input.GetKeyDown(KeyCode.Space))
                         Fly();
-                    if (Input.GetKeyDown(KeyCode.Q))
-                    {
-                        ActiveFireHint();
-                        return;
-                    }
+                    if (Input.GetKeyDown(KeyCode.Q)) ActiveFireHint();
 
-                    if (fireWallHint.activeSelf)
+                    if (!isPlaceWallLv2) return;
+                    if (!oldTouch.position.Equals(new Vector2(-1, -1)))
                     {
+                        Debug.Log(oldTouch.position);
                         Vector3 worldPosition;
-                        if (Input.touches.Length != 0)
-                            worldPosition = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+                        if (oldTouch.position != new Vector2(-1, -1))
+                            worldPosition = Camera.main.ScreenToWorldPoint(oldTouch.position);
                         else
-                            worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                            return;
                         var hintpos = new Vector2(Mathf.Round(worldPosition.x), gameConfig.groundHeight);
-                        hintpos.x = Mathf.Max(hintpos.x, gameConfig.fireRangeMin);
-                        fireWallHint.transform.position = hintpos;
-                        if (Input.GetKeyDown(KeyCode.Mouse0) || Input.touches.Length != 0)
+                        var index = 0;
+                        foreach (var fireWall in fireWalls)
                         {
-                            var index = 0;
-                            foreach (var fireWall in fireWalls)
+                            if (fireWall.transform.position.x.Equals(hintpos.x))
                             {
-                                if (fireWall.transform.position.x.Equals(fireWallHint.transform.position.x))
-                                {
-                                    mapState[index] = groundState.FireWall;
-                                    fireWallHint.SetActive(false);
-                                    UpdateMapState();
-                                    break;
-                                }
-
-                                index++;
+                                mapState[index] = groundState.FireWall;
+                                isPlaceWall = false;
+                                isPlaceWallLv2 = false;
+                                UpdateMapState();
+                                break;
                             }
+
+                            index++;
                         }
                     }
 
@@ -190,7 +198,7 @@ namespace InGame
 
         public void ActiveFireHint()
         {
-            fireWallHint.SetActive(true);
+            isPlaceWall = !isPlaceWall;
         }
 
         private void GenerateNextMap(List<groundState> mapState)
@@ -283,7 +291,7 @@ namespace InGame
                 case GameFlowState.Flying:
                     createWall.GameObject().SetActive(false);
                     StartButton.GameObject().SetActive(false);
-                    fireWallHint.SetActive(false);
+                    isPlaceWall = false;
                     scriptBird.Fly();
                     fireTime = 0;
                     transform.position = new Vector2(0, 0);

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: gameConfig
   m_EditorClassIdentifier: 
   birdSpeed: {x: 4, y: -1.5}
-  birdEnterPosition: {x: -10, y: 2}
-  mapSize: {x: 10, y: 5}
+  birdEnterPosition: {x: -6.666667, y: 2}
+  mapSize: {x: 6.666667, y: 5}
   groundHeight: -2.99
   aboveFireSpeed: {x: 0, y: 1}
   fireTime: 0.3
@@ -23,9 +23,9 @@ MonoBehaviour:
   fireWidth: 1
   switchTime: 1.38
   initHp: 100
-  flyToSkyHp: 60
+  flyToSkyHp: 20
   flyToSkyTime: 1
-  foodHp: 60
+  foodHp: 10
   birdPictureState: 1
   birdType: 3
-  foodNumber: 0
+  foodNumber: 4
