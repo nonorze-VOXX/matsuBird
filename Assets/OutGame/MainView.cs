@@ -10,6 +10,7 @@ public class MainView : MonoBehaviour
     public Button cacha;
     public Button bird;
     public Image bird_saying;
+    public AudioClip bgm;
     
     // Start is called before the first frame update
     void Start()
