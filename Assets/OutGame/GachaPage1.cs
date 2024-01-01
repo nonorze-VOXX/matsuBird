@@ -4,6 +4,8 @@ using UnityEngine;
 public class GachaPage1 : Scene_manerger
 {
     private GachaView _gachaView;
+    private bool IsBirdComed = false;
+    private int birdType = 1;
 
     private readonly List<string> birdPath = new()
     {
@@ -12,8 +14,6 @@ public class GachaPage1 : Scene_manerger
         "b3",
         "b4"
     };
-
-    private bool IsBirdComed;
 
     public override void Start()
     {
@@ -25,6 +25,12 @@ public class GachaPage1 : Scene_manerger
 
     public override void Update()
     {
+        if (!_gachaView.birdCome.isPlaying && IsBirdComed)
+        {
+            OutGameManager.instance.SetCurrentDetail(birdType);
+            OutGameManager.instance.GotoScene("BirdDetail");
+        }
+        
     }
 
     private void changeTostoImage()
@@ -47,11 +53,11 @@ public class GachaPage1 : Scene_manerger
 
     private TeamBird RandomBird()
     {
-        var randomNumber = Random.Range(1, 5);
-        var path = birdPath[randomNumber - 1];
+        birdType = Random.Range(1, 5);
+        var path = birdPath[birdType - 1];
         _gachaView.bird.sprite = Resources.Load<Sprite>("Image/bird/" + path + "_f");
 
-        return new TeamBird(path, randomNumber);
+        return new TeamBird(path, birdType);
     }
 
     private void PlayKasu()
