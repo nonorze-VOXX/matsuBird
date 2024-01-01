@@ -35,5 +35,7 @@ namespace InGame
         public float foodHp;
         public BirdPictureState birdPictureState;
         public BirdType birdType;
+        public int foodNumber;
+        public float DropTime;
     }
 }

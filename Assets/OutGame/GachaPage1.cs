@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class GachaPage1 : Scene_manerger
 {
@@ -12,16 +7,17 @@ public class GachaPage1 : Scene_manerger
     private bool IsBirdComed = false;
     private int birdType = 1;
 
-    private List<string> birdPath = new List<string>()
+    private readonly List<string> birdPath = new()
     {
         "b1",
         "b2",
         "b3",
         "b4"
     };
-    public  override void Start()
+
+    public override void Start()
     {
-        _gachaView = GameObject.FindObjectOfType<GachaView>();
+        _gachaView = Object.FindObjectOfType<GachaView>();
         _gachaView.kami.onClick.AddListener(PlayKasu);
         _gachaView.backButton.onClick.AddListener(BackMain);
         Debug.Log(_gachaView.backButton);
@@ -36,13 +32,13 @@ public class GachaPage1 : Scene_manerger
         }
         
     }
-    
-    void changeTostoImage()
+
+    private void changeTostoImage()
     {
         if (_gachaView.pan != null && _gachaView.tostoList.Length > 0 && !IsBirdComed)
         {
-            int randomIndex = Random.Range(0, _gachaView.tostoList.Length);
-            Sprite tostoImage = _gachaView.tostoList[randomIndex];
+            var randomIndex = Random.Range(0, _gachaView.tostoList.Length);
+            var tostoImage = _gachaView.tostoList[randomIndex];
             if (randomIndex == 1)
             {
                 _gachaView.birdCome.Play();
@@ -52,29 +48,27 @@ public class GachaPage1 : Scene_manerger
             }
 
             _gachaView.pan.sprite = tostoImage;
-        } 
+        }
     }
 
-    TeamBird RandomBird()
+    private TeamBird RandomBird()
     {
         birdType = Random.Range(1, 5);
-        string path = birdPath[birdType-1];
+        var path = birdPath[birdType - 1];
         _gachaView.bird.sprite = Resources.Load<Sprite>("Image/bird/" + path + "_f");
-        
-        return new TeamBird(path,birdType);
+
+        return new TeamBird(path, birdType);
     }
-    
-    void PlayKasu()
+
+    private void PlayKasu()
     {
         _gachaView.panClick.Play();
         changeTostoImage();
         _gachaView.panKasu.Play();
     }
 
-    void BackMain()
+    private void BackMain()
     {
-        Debug.Log("ho to main");
         OutGameManager.instance.GotoScene("Main");
     }
-
 }

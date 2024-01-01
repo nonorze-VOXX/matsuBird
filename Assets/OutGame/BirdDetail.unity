@@ -994,6 +994,7 @@ MonoBehaviour:
   duckQuack: {fileID: 8300000, guid: cc168878343048243aebf7f26bc78791, type: 3}
   audioSourceSE: {fileID: 2066668315}
   audioSourceBGM: {fileID: 244042452}
+  birdData: {fileID: 11400000, guid: 92068147cc51f044cbf7ffd05f2b5ba2, type: 2}
 --- !u!4 &1580501291
 Transform:
   m_ObjectHideFlags: 0
@@ -1406,6 +1407,7 @@ MonoBehaviour:
   bird: {fileID: 1677962122}
   name: {fileID: 1423264004}
   detail: {fileID: 697158487}
+  se: {fileID: 8300000, guid: 189ad1a232d1244449334ca4b3eff43c, type: 3}
 --- !u!95 &1790175721
 Animator:
   serializedVersion: 5
