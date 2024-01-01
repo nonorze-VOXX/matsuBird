@@ -1,29 +1,26 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
     public class WelcomePage : MonoBehaviour
     {
+        public Button kokuchi;
         public TMP_Text welcomeText;
-        private AudioSource audioSource;
         public AudioClip audioClip;
 
         private void Awake()
         {
-            audioSource = transform.Find("Audio Source")?.GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                Debug.LogError("auto not work");
-                this.enabled = false;
-            }
+            kokuchi.onClick.AddListener(GotoMain);
         }
 
         private void Start()
         {
             welcomeText.text = "Welcome to the game!";
-            audioSource.PlayOneShot(audioClip);
+            OutGameManager.instance.audioSourceBGM.clip = audioClip;
+            OutGameManager.instance.audioSourceBGM.Play();
         }
 
         private void Update()
@@ -41,5 +38,12 @@ namespace DefaultNamespace
                 OutGameManager.instance.StartGame();
             }
         }
+
+        private void GotoMain()
+        {
+            OutGameManager.instance.audioSourceBGM.Stop();
+            OutGameManager.instance.GotoScene("loading");
+        }
     }
+    
 }

@@ -11,8 +11,6 @@ public class MainPage : Scene_manerger
     // Start is called before the first frame update
     public override void Start()
     {
-        Debug.Log("welcome start");
-        
         _mainView = GameObject.FindObjectOfType<MainView>();
         if (_mainView == null)
         {
@@ -39,7 +37,6 @@ public class MainPage : Scene_manerger
     {
         if (focusl)
         {
-            Debug.Log(this._mainView.bird.name + " was selected");
             SwitchPage("InGame");
         }
         else
